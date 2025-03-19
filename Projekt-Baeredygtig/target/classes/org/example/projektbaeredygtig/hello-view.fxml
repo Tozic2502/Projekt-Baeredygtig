@@ -3,16 +3,17 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="1018.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.projektbaeredygtig.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1275.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.projektbaeredygtig.Controller">
    <bottom>
       <GridPane fx:id="gridPane" prefHeight="119.0" prefWidth="1100.0" BorderPane.alignment="CENTER">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="262.0" minWidth="10.0" prefWidth="225.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="307.99998474121094" minWidth="10.0" prefWidth="164.33333333333334" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="409.33333333333337" minWidth="10.0" prefWidth="163.99996948242188" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="307.99998474121094" minWidth="10.0" prefWidth="129.66669718424475" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.9999694824219" minWidth="10.0" prefWidth="482.9999694824219" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="409.33333333333337" minWidth="10.0" prefWidth="259.3333638509114" />
         </columnConstraints>
         <rowConstraints>
@@ -22,12 +23,12 @@
          <children>
             <ComboBox fx:id="TypeBox" editable="true" opacity="0.71" prefWidth="150.0" promptText="Choose Time Period">
                <GridPane.margin>
-                  <Insets left="40.0" top="20.0" />
+                  <Insets bottom="20.0" left="100.0" top="20.0" />
                </GridPane.margin>
             </ComboBox>
             <ComboBox fx:id="ComboboxYear" editable="true" opacity="0.73" prefWidth="150.0" promptText="Choose year" GridPane.rowIndex="1">
                <GridPane.margin>
-                  <Insets bottom="20.0" left="40.0" />
+                  <Insets bottom="20.0" left="100.0" />
                </GridPane.margin>
             </ComboBox>
             <ChoiceBox fx:id="ChoiceboxMonth" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -35,7 +36,7 @@
                   <Insets />
                </opaqueInsets>
                <GridPane.margin>
-                  <Insets bottom="20.0" />
+                  <Insets bottom="20.0" left="20.0" />
                </GridPane.margin>
             </ChoiceBox>
             <Label fx:id="MonthLabel" alignment="CENTER" opacity="0.52" text="Choose Month" textAlignment="CENTER" textFill="FORESTGREEN" GridPane.columnIndex="1">
@@ -43,14 +44,14 @@
                   <Font name="Modern No. 20" size="12.0" />
                </font>
                <GridPane.margin>
-                  <Insets top="30.0" />
+                  <Insets left="20.0" top="30.0" />
                </GridPane.margin>
             </Label>
             <ChoiceBox fx:id="ChoiceboxWeek" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets bottom="20.0" />
                </GridPane.margin></ChoiceBox>
-            <Label fx:id="WeekLabel" opacity="0.47" text="Choose Week" textFill="FORESTGREEN" GridPane.columnIndex="2">
+            <Label fx:id="WeekLabel" opacity="0.47" prefHeight="47.0" prefWidth="123.0" text="Choose Week" textFill="FORESTGREEN" GridPane.columnIndex="2">
                <padding>
                   <Insets top="30.0" />
                </padding></Label>
@@ -66,9 +67,15 @@
       <VBox prefHeight="739.0" prefWidth="60.0" BorderPane.alignment="CENTER" />
    </left>
    <top>
-      <Pane prefHeight="71.0" prefWidth="800.0" BorderPane.alignment="CENTER">
+      <Pane prefHeight="61.0" prefWidth="1275.0" styleClass="gradient-pane" BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="56.0" layoutY="27.0" text="Navn på program..." textFill="#e00c0c" />
+            <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="56.0" layoutY="16.0" text="Green Route" textFill="WHITE">
+               <font>
+                  <Font name="Verdana Bold" size="24.0" />
+               </font>
+               <effect>
+                  <DropShadow blurType="ONE_PASS_BOX" height="18.08" radius="13.65" width="38.52" />
+               </effect></Label>
          </children>
       </Pane>
    </top>
