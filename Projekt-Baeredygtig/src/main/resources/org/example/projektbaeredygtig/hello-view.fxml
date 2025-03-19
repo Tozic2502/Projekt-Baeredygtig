@@ -3,10 +3,11 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1275.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
    <bottom>
       <GridPane prefHeight="119.0" prefWidth="1100.0" BorderPane.alignment="CENTER">
         <columnConstraints>
@@ -54,9 +55,9 @@
                <padding>
                   <Insets top="30.0" />
                </padding></Label>
-            <ComboBox opacity="0.52" prefWidth="125.0" promptText="Choose mode" GridPane.columnIndex="3" GridPane.rowIndex="1">
+            <ComboBox opacity="0.52" prefWidth="117.0" promptText="Choose mode" GridPane.columnIndex="3" GridPane.rowIndex="1">
                <GridPane.margin>
-                  <Insets left="170.0" />
+                  <Insets bottom="20.0" left="170.0" />
                </GridPane.margin>
             </ComboBox>
          </children>
@@ -66,9 +67,15 @@
       <VBox prefHeight="739.0" prefWidth="60.0" BorderPane.alignment="CENTER" />
    </left>
    <top>
-      <Pane prefHeight="71.0" prefWidth="800.0" BorderPane.alignment="CENTER">
+      <Pane prefHeight="61.0" prefWidth="1275.0" styleClass="gradient-pane" BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="56.0" layoutY="27.0" text="Navn på program..." textFill="#e00c0c" />
+            <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="56.0" layoutY="16.0" text="Green Route" textFill="WHITE">
+               <font>
+                  <Font name="Verdana Bold" size="24.0" />
+               </font>
+               <effect>
+                  <DropShadow blurType="ONE_PASS_BOX" height="18.08" radius="13.65" width="38.52" />
+               </effect></Label>
          </children>
       </Pane>
    </top>
