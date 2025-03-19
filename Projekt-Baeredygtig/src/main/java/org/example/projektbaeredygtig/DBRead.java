@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DBRead {
 
@@ -39,26 +41,27 @@ public class DBRead {
     }
 
     /**
-     * Attempts to get an existing measurement from the Database based on the date it was measured.
-     * @param date of last being emptied
+     * Attempts to get all existing measurement from the Database with a date matching the input.
+     * @param date of measurement
      * @return Measurement object with the variables from the Database.
      */
-    public static Measurement getMeasurement(Date date)
+    public static List<Measurement> getMeasurements(Date date)
     {
         Connection conn = DB.getConnection();
         String sql = "SELECT MeasureID FROM Measurements WHERE MeasureDate = " + date;
-        Measurement measurement = null;
+        List<Measurement> measurements = new ArrayList<Measurement>();
 
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             ResultSet rs = pstmt.executeQuery();
-
-            return getMeasurement(rs.getInt(0));
+            while (rs.next()) {
+                measurements.add(getMeasurement(rs.getInt(0)));
+            }
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return null;
+        return measurements;
     }
 
     public static String getCityOfBin(int BinID)
