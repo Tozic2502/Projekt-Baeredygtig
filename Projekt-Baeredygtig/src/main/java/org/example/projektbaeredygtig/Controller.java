@@ -5,15 +5,17 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
 import java.time.Year;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Controller {
     @FXML ComboBox<String> ComboboxYear, TypeBox;
     @FXML ChoiceBox<String> ChoiceboxMonth, ChoiceboxWeek;
     @FXML Button ModeToggle;
     @FXML GridPane gridPane;
-    @FXML Label MonthLabel;
+    @FXML Label MonthLabel, WeekLabel;
     private boolean isAdvancedMode = false;
-    private TextField TypeField = new TextField();
+    private TextField typeField = new TextField();
     private TextField yearField = new TextField();
     private TextField monthField = new TextField();
     private TextField weekField = new TextField();
@@ -54,11 +56,16 @@ public class Controller {
         if (isAdvancedMode) {
             System.out.println("Switch Mode text");
             switchToTextFields();
-            typeChoicetext();
+            MonthLabel.setText("Enter Time Period");
+            WeekLabel.setText("");
+            ModeToggle.setText("Simple");
         } else {
             System.out.println("Switch Mode box");
             switchToComboBoxes();
             typeChoicebox();
+            MonthLabel.setText("Choose month");
+            WeekLabel.setText("Choose week");
+            ModeToggle.setText("Advanced");
         }
     }
 
@@ -80,17 +87,23 @@ public class Controller {
         gridPane.getChildren().removeAll(TypeBox, ComboboxYear, ChoiceboxMonth, ChoiceboxWeek);
 
         // Add the TextFields back with the saved indices
-        gridPane.add(TypeField, columnIndexTypeBox, rowIndexTypeBox);
+        gridPane.add(typeField, columnIndexTypeBox, rowIndexTypeBox);
         gridPane.add(yearField, columnIndexComboboxYear, rowIndexComboboxYear);
         gridPane.add(monthField, columnIndexChoiceboxMonth, rowIndexChoiceboxMonth);
         gridPane.add(weekField, columnIndexChoiceboxWeek, rowIndexChoiceboxWeek);
+        typeField.setVisible(false);
+        yearField.setVisible(false);
+        weekField.setVisible(false);
+        monthField.textProperty().addListener((observable, oldValue, newValue) -> {
+            typeChoicetext(newValue);
+        });
 
     }
 
     private void switchToComboBoxes() {
         // Get the column and row indices, default to 0 if null
-        int columnIndexTypeField = GridPane.getColumnIndex(TypeField) != null ? GridPane.getColumnIndex(TypeField) : 0;
-        int rowIndexTypeField = GridPane.getRowIndex(TypeField) != null ? GridPane.getRowIndex(TypeField) : 0;
+        int columnIndexTypeField = GridPane.getColumnIndex(typeField) != null ? GridPane.getColumnIndex(typeField) : 0;
+        int rowIndexTypeField = GridPane.getRowIndex(typeField) != null ? GridPane.getRowIndex(typeField) : 0;
 
         int columnIndexYearField = GridPane.getColumnIndex(yearField) != null ? GridPane.getColumnIndex(yearField) : 0;
         int rowIndexYearField = GridPane.getRowIndex(yearField) != null ? GridPane.getRowIndex(yearField) : 0;
@@ -102,7 +115,7 @@ public class Controller {
         int rowIndexWeekField = GridPane.getRowIndex(weekField) != null ? GridPane.getRowIndex(weekField) : 0;
 
         // Remove the TextFields
-        gridPane.getChildren().removeAll(TypeField, yearField, monthField, weekField);
+        gridPane.getChildren().removeAll(typeField, yearField, monthField, weekField);
 
         // Add the ComboBoxes back with the saved indices
         gridPane.add(TypeBox, columnIndexTypeField, rowIndexTypeField);
@@ -144,9 +157,80 @@ public class Controller {
             ChoiceboxWeek.setVisible(true);
         }
     }
-    private void typeChoicetext() {
+    /**
+     * Parses the input text to detect a year, month, quarter, or week.
+     *
+     * Expected input examples:
+     * - "2003 month January"
+     * - "2003 quarter Q1"
+     * - "2003 week 12"
+     * - "2003" (just a year)
+     *
+     * This method prints out what was detected; you can replace the
+     * print statements with your own processing logic.
+     */
+    private void typeChoicetext(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            return; // nothing to process
+        }
+        input = input.trim();
 
+        // --- Extract Year ---
+        Pattern yearPattern = Pattern.compile("\\b(\\d{4})\\b");
+        Matcher yearMatcher = yearPattern.matcher(input);
+        String year = null;
+        if (yearMatcher.find()) {
+            year = yearMatcher.group(1);
+        }
+
+        // --- Extract Quarter ---
+        // Look for keywords "quarter" or a "Q" followed by a number 1-4.
+        Pattern quarterPattern = Pattern.compile("(?i)\\b(?:quarter|q)\\s*([1-4])\\b");
+        Matcher quarterMatcher = quarterPattern.matcher(input);
+        String quarter = null;
+        if (quarterMatcher.find()) {
+            quarter = quarterMatcher.group(1);
+        }
+
+        // --- Extract Month ---
+        // Convert the input to lowercase and check for month names.
+        String[] months = {"january", "february", "march", "april", "may", "june",
+                "july", "august", "september", "october", "november", "december"};
+        String foundMonth = null;
+        String inputLower = input.toLowerCase();
+        for (String m : months) {
+            if (inputLower.contains(m)) {
+                foundMonth = m;
+                break;
+            }
+        }
+
+        // --- Extract Week ---
+        // Look for "week" followed by one or two digits.
+        Pattern weekPattern = Pattern.compile("(?i)\\bweek\\s*(\\d{1,2})\\b");
+        Matcher weekMatcher = weekPattern.matcher(input);
+        String week = null;
+        if (weekMatcher.find()) {
+            week = weekMatcher.group(1);
+        }
+
+        // --- Report Detected Data ---
+        System.out.println("Input: " + input);
+        if (year != null) {
+            System.out.println("Detected Year: " + year);
+        }
+        if (foundMonth != null) {
+            System.out.println("Detected Month: " + foundMonth);
+        }
+        if (quarter != null) {
+            System.out.println("Detected Quarter: Q" + quarter);
+        }
+        if (week != null) {
+            System.out.println("Detected Week: " + week);
+        }
     }
+
+
     @FXML
     private void optimiseLabel() {
 

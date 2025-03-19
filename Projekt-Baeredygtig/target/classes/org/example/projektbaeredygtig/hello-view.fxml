@@ -50,7 +50,7 @@
                <GridPane.margin>
                   <Insets bottom="20.0" />
                </GridPane.margin></ChoiceBox>
-            <Label opacity="0.47" text="Choose Week" textFill="FORESTGREEN" GridPane.columnIndex="2">
+            <Label fx:id="WeekLabel" opacity="0.47" text="Choose Week" textFill="FORESTGREEN" GridPane.columnIndex="2">
                <padding>
                   <Insets top="30.0" />
                </padding></Label>
