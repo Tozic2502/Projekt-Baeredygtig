@@ -1,12 +1,11 @@
-package org.example.projektbaeredygtig.DB;
-
-import org.example.projektbaeredygtig.ColorConverter;
-import org.example.projektbaeredygtig.Measurement;
+package org.example.projektbaeredygtig;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DBRead {
 
@@ -38,38 +37,37 @@ public class DBRead {
         catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        DB.disconnect();
         return null;
     }
 
     /**
-     * Attempts to get an existing measurement from the Database based on the date it was measured.
-     * @param date of last being emptied
+     * Attempts to get all existing measurement from the Database with a date matching the input.
+     * @param date of measurement
      * @return Measurement object with the variables from the Database.
      */
-    public static Measurement getMeasurement(Date date)
+    public static List<Measurement> getMeasurements(Date date)
     {
         Connection conn = DB.getConnection();
-        String sql = "SELECT MeasureID FROM Measurements WHERE MeasuredDate = " + date;
-        Measurement measurement = null;
+        String sql = "SELECT MeasureID FROM Measurements WHERE MeasureDate = " + date;
+        List<Measurement> measurements = new ArrayList<Measurement>();
 
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             ResultSet rs = pstmt.executeQuery();
-
-            return getMeasurement(rs.getInt(0));
+            while (rs.next()) {
+                measurements.add(getMeasurement(rs.getInt(0)));
+            }
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        DB.disconnect();
-        return null;
+        return measurements;
     }
 
     public static String getCityOfBin(int BinID)
     {
         Connection conn = DB.getConnection();
-        String sql = "SELECT City FROM Bins WHERE BinID = " + BinID;
+        String sql = "SELECT City FROM Bins WHERE id = " + BinID;
         Measurement measurement = null;
 
         try {
@@ -82,7 +80,6 @@ public class DBRead {
         catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        DB.disconnect();
         return null;
     }
 }
