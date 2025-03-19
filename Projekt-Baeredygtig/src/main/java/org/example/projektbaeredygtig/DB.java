@@ -3,8 +3,9 @@ package org.example.projektbaeredygtig;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Properties;
 
 public class DB
@@ -35,6 +36,33 @@ public class DB
         } catch (IOException e)
         {
             System.err.println("Error loading properties file");
+        }
+    }
+
+    static void connect()
+    {
+        try{
+            if(con == null || con.isClosed()){
+                con = DriverManager.getConnection("jdbc:sqlserver://localhost:" + port + ";databaseName=" + databaseName, userName, password);
+                System.out.println("Connected to database");
+            }
+
+        } catch(SQLException e)
+        {
+            System.err.println("Error connecting to database" + e.getMessage());
+        }
+    }
+
+    static void disconnect()
+    {
+        try{
+            if(con != null && !con.isClosed()){
+                con.close();
+                System.out.println("Disconnected from database");
+            }
+        } catch (SQLException e)
+        {
+            System.err.println("Error disconnecting from database" + e.getMessage());
         }
     }
 }
