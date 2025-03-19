@@ -36,19 +36,7 @@ public class CSVReader {
             measurement.setBinID(Integer.parseInt(parts[1]));       // BinID
             measurement.setMeasuredDate(Date.valueOf(parts[2]));    // MeasuredDate
             measurement.setEmptiedDate(Date.valueOf(parts[3]));     // EmptiedDate
-            // Bin Color
-            switch (parts[4])
-            {
-                case "yellow":
-                    measurement.setColor(BinColor.YELLOW);
-                    break;
-                case "red":
-                    measurement.setColor(BinColor.RED);
-                    break;
-                default:
-                    measurement.setColor(BinColor.GREEN);
-                    break;
-            }
+            measurement.setColor(ColorConverter.convert(parts[4])); // BinColor
             measurement.setHazardWaste(Boolean.parseBoolean(parts[5])); // HazardWaste
         }
     }
