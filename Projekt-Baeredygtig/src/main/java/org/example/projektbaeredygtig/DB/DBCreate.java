@@ -10,7 +10,7 @@ public class DBCreate
     public static void createMeasurement(Measurement measurement)
     {
         Connection con = DB.getConnection();
-        String sql = "INSERT INTO Measurements (BinID, MeasuredDate, EmptiedDate, Colour, HazardWaste) VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO Measurements (BinID, MeasuredDate, EmptiedDate, Colour, HazardWaste, BinLevel) VALUES (?,?,?,?,?,?)";
         try
         {
             PreparedStatement ps = con.prepareStatement(sql);
