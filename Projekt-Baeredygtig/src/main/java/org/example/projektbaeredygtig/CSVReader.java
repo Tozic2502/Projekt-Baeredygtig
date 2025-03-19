@@ -32,12 +32,15 @@ public class CSVReader {
             String line = scanner.nextLine();
             String[] parts = line.split(",");
             Measurement measurement = new Measurement();
-            measurement.setMeasureID(Integer.parseInt(parts[0]));   // MeasureID
+            // Date time
+            String dtime = parts[0].substring(0, parts[0].indexOf(" "));
+            measurement.setMeasuredDate(Date.valueOf(dtime));    // MeasuredDate
             measurement.setBinID(Integer.parseInt(parts[1]));       // BinID
-            measurement.setMeasuredDate(Date.valueOf(parts[2]));    // MeasuredDate
-            measurement.setEmptiedDate(Date.valueOf(parts[3]));     // EmptiedDate
-            measurement.setColor(ColorConverter.convert(parts[4])); // BinColor
-            measurement.setHazardWaste(Boolean.parseBoolean(parts[5])); // HazardWaste
+
+            measurement.setColor(ColorConverter.convert(parts[5])); // BinColor
+            measurement.setHazardWaste(Boolean.parseBoolean(parts[6])); // HazardWaste
+            measurement.setFoodWaste(Boolean.parseBoolean(parts[7]));
+            measurement.setLevel(Float.parseFloat(parts[8]));
         }
     }
 }
