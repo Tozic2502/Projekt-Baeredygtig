@@ -10,6 +10,7 @@ module org.example.projektbaeredygtig {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.sql;
 
     opens org.example.projektbaeredygtig to javafx.fxml;
     exports org.example.projektbaeredygtig;
