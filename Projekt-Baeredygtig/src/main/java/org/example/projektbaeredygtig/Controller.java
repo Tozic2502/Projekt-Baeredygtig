@@ -240,6 +240,7 @@ public class Controller {
         int fullRoutekm = 80;
         int fullRoutetime = 90;
 
+
         //calc functions for label
 
     }
