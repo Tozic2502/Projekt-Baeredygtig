@@ -1,45 +1,79 @@
 package org.example.projektbaeredygtig;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 
 import java.time.Year;
 
 public class Controller {
-    @FXML
-    private Label welcomeText;
+    @FXML ComboBox<String> ComboboxYear, TypeBox;
+    @FXML ChoiceBox ChoiceboxMonth, ChoiceboxWeek;
+    @FXML Button ModeToggle;
+    @FXML GridPane gridPane;
+    @FXML Label MonthLabel;
+
+    private boolean isAdvancedMode = false;
+
+    private TextField TypeField = new TextField();
+    private TextField yearField = new TextField();
+    private TextField monthField = new TextField();
+    private TextField weekField = new TextField();
 
     @FXML
-    private void onAdvancedModeClick() {
+    private void toggleAdvancedMode() {
         isAdvancedMode = !isAdvancedMode;
 
-        ComboBoxYear.setEditable(isAdvancedMode);
-        ComboBoxMonth.setEditable(isAdvancedMode);
-        ComboBoxWeek.setEditable(isAdvancedMode);
+        if (isAdvancedMode) {
+            switchToTextFields();
+        } else {
+            switchToComboBoxes();
+        }
+    }
+
+    private void switchToTextFields() {
+        gridPane.getChildren().removeAll(TypeBox, ComboboxYear, ChoiceboxMonth, ChoiceboxWeek);
+        gridPane.add(TypeField, GridPane.getColumnIndex(TypeBox), GridPane.getRowIndex(TypeBox));
+        gridPane.add(yearField, GridPane.getColumnIndex(ComboboxYear), GridPane.getRowIndex(ComboboxYear));
+        gridPane.add(monthField, GridPane.getColumnIndex(ChoiceboxMonth), GridPane.getRowIndex(ChoiceboxMonth));
+        gridPane.add(weekField, GridPane.getColumnIndex(ChoiceboxWeek), GridPane.getRowIndex(ChoiceboxWeek));
+    }
+
+    private void switchToComboBoxes() {
+        gridPane.getChildren().removeAll(TypeField, yearField, monthField, weekField);
+        gridPane.add(TypeBox, GridPane.getColumnIndex(TypeField), GridPane.getRowIndex(TypeField));
+        gridPane.add(ComboboxYear, GridPane.getColumnIndex(yearField), GridPane.getRowIndex(yearField));
+        gridPane.add(ChoiceboxMonth, GridPane.getColumnIndex(monthField), GridPane.getRowIndex(monthField));
+        gridPane.add(ChoiceboxWeek, GridPane.getColumnIndex(weekField), GridPane.getRowIndex(weekField));
     }
 
     @FXML
-    private void typeLabel() {
-        if (Year) {
-            ComboBoxYear.setVisible(true);
-            ComboBoxMonth.setVisible(false);
-            ComboBoxWeek.setVisible(false);
-        } else if (Quarters) {
-            ComboboxYear.setVisible(true);
-            ComboBoxMonth.setVisible(true);
-            ComboBoxMonth.getItems().setAll("Q1", "Q2", "Q3", "Q4");
-            chooseLabel.setText("Choose Quarter");
-            ComboboxWeek.setVisible(false);
-        } else if (Month) {
-            ComboboxYear.setVisible(true);
-            ComboBoxMonth.setVisible(true);
-            chooseLabel.setText("Choose Month");
-        } else if (Week) {
-            ComboboxYear.setVisible(true);
-            ComboBoxMonth.setVisible(true);
-            ComboBoxWeek.setVisible(true);
+    private void typeChoice() {
+        String selectedType = TypeBox.getValue(); // Assuming TypeBox is a ComboBox or ChoiceBox
 
+        if ("Year".equals(selectedType)) {
+            ComboboxYear.setVisible(true);
+            ChoiceboxMonth.setVisible(false);
+            ChoiceboxWeek.setVisible(false);
+        } else if ("Quarters".equals(selectedType)) {
+            ComboboxYear.setVisible(true);
+            ChoiceboxMonth.setVisible(true);
+            ChoiceboxMonth.getItems().setAll("Q1", "Q2", "Q3", "Q4");
+            MonthLabel.setText("Choose Quarter");
+            ChoiceboxWeek.setVisible(false);
+        } else if ("Month".equals(selectedType)) {
+            ComboboxYear.setVisible(true);
+            ChoiceboxMonth.setVisible(true);
+            ChoiceboxMonth.getItems().setAll(
+                    "January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"
+            );
+            MonthLabel.setText("Choose Month");
+            ChoiceboxWeek.setVisible(false);
+        } else if ("Week".equals(selectedType)) {
+            ComboboxYear.setVisible(true);
+            ChoiceboxMonth.setVisible(true);
+            ChoiceboxWeek.setVisible(true);
         }
     }
     @FXML
@@ -48,6 +82,9 @@ public class Controller {
         //display label
     }
     private void calcOptimise(){
+        int fullRoutekm = 80;
+        int fullRoutetime = 90;
+
         //calc functions for label
 
     }

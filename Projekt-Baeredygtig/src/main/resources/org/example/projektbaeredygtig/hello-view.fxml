@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.projektbaeredygtig.Controller">
    <bottom>
       <GridPane prefHeight="119.0" prefWidth="1100.0" BorderPane.alignment="CENTER">
         <columnConstraints>
@@ -25,12 +25,12 @@
                   <Insets left="40.0" top="20.0" />
                </GridPane.margin>
             </ComboBox>
-            <ComboBox editable="true" opacity="0.73" prefWidth="150.0" promptText="Choose year" GridPane.rowIndex="1">
+            <ComboBox fx:id="ComboxYear" editable="true" opacity="0.73" prefWidth="150.0" promptText="Choose year" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets bottom="20.0" left="40.0" />
                </GridPane.margin>
             </ComboBox>
-            <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <ChoiceBox fx:id="ChoiceboxMonth" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -38,7 +38,7 @@
                   <Insets bottom="20.0" />
                </GridPane.margin>
             </ChoiceBox>
-            <Label alignment="CENTER" opacity="0.52" text="Choose Month" textAlignment="CENTER" textFill="FORESTGREEN" GridPane.columnIndex="1">
+            <Label fx:id="MonthLabel" alignment="CENTER" opacity="0.52" text="Choose Month" textAlignment="CENTER" textFill="FORESTGREEN" GridPane.columnIndex="1">
                <font>
                   <Font name="Modern No. 20" size="12.0" />
                </font>
@@ -46,7 +46,7 @@
                   <Insets top="30.0" />
                </GridPane.margin>
             </Label>
-            <ChoiceBox prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+            <ChoiceBox fx:id="ChoiceboxWeek" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets bottom="20.0" />
                </GridPane.margin></ChoiceBox>
@@ -54,11 +54,11 @@
                <padding>
                   <Insets top="30.0" />
                </padding></Label>
-            <ComboBox opacity="0.52" prefWidth="125.0" promptText="Choose mode" GridPane.columnIndex="3" GridPane.rowIndex="1">
+            <Button fx:id="ModeToggle" mnemonicParsing="false" text="Advanced mode" GridPane.columnIndex="3" GridPane.rowIndex="1">
                <GridPane.margin>
-                  <Insets left="170.0" />
+                  <Insets left="210.0" />
                </GridPane.margin>
-            </ComboBox>
+            </Button>
          </children>
       </GridPane>
    </bottom>
