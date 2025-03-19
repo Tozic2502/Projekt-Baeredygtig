@@ -6,9 +6,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.projektbaeredygtig.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="1018.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.projektbaeredygtig.Controller">
    <bottom>
-      <GridPane prefHeight="119.0" prefWidth="1100.0" BorderPane.alignment="CENTER">
+      <GridPane fx:id="gridPane" prefHeight="119.0" prefWidth="1100.0" BorderPane.alignment="CENTER">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="262.0" minWidth="10.0" prefWidth="225.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="307.99998474121094" minWidth="10.0" prefWidth="164.33333333333334" />
@@ -20,12 +20,12 @@
           <RowConstraints maxHeight="79.0" minHeight="10.0" prefHeight="62.33333333333332" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <ComboBox editable="true" opacity="0.71" prefWidth="150.0" promptText="Choose Time Period">
+            <ComboBox fx:id="TypeBox" editable="true" opacity="0.71" prefWidth="150.0" promptText="Choose Time Period">
                <GridPane.margin>
                   <Insets left="40.0" top="20.0" />
                </GridPane.margin>
             </ComboBox>
-            <ComboBox fx:id="ComboxYear" editable="true" opacity="0.73" prefWidth="150.0" promptText="Choose year" GridPane.rowIndex="1">
+            <ComboBox fx:id="ComboboxYear" editable="true" opacity="0.73" prefWidth="150.0" promptText="Choose year" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets bottom="20.0" left="40.0" />
                </GridPane.margin>
