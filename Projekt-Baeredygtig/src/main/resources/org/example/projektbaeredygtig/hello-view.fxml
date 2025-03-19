@@ -1,16 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.projektbaeredygtig.HelloController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
-
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
-</VBox>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+   <bottom>
+      <GridPane prefHeight="119.0" prefWidth="1100.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="262.0" minWidth="10.0" prefWidth="225.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="307.99998474121094" minWidth="10.0" prefWidth="164.33333333333334" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="409.33333333333337" minWidth="10.0" prefWidth="163.99996948242188" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="409.33333333333337" minWidth="10.0" prefWidth="259.3333638509114" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints maxHeight="56.333333333333336" minHeight="10.0" prefHeight="56.333333333333336" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="79.0" minHeight="10.0" prefHeight="62.33333333333332" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <ComboBox editable="true" opacity="0.71" prefWidth="150.0" promptText="Choose Time Period">
+               <GridPane.margin>
+                  <Insets left="40.0" top="20.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <ComboBox editable="true" opacity="0.73" prefWidth="150.0" promptText="Choose year" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="20.0" left="40.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <GridPane.margin>
+                  <Insets bottom="20.0" />
+               </GridPane.margin>
+            </ChoiceBox>
+            <Label alignment="CENTER" opacity="0.52" text="Choose Month" textAlignment="CENTER" textFill="FORESTGREEN" GridPane.columnIndex="1">
+               <font>
+                  <Font name="Modern No. 20" size="12.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets top="30.0" />
+               </GridPane.margin>
+            </Label>
+            <ChoiceBox prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="20.0" />
+               </GridPane.margin></ChoiceBox>
+            <Label opacity="0.47" text="Choose Week" textFill="FORESTGREEN" GridPane.columnIndex="2">
+               <padding>
+                  <Insets top="30.0" />
+               </padding></Label>
+            <ComboBox opacity="0.52" prefWidth="125.0" promptText="Choose mode" GridPane.columnIndex="3" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets left="170.0" />
+               </GridPane.margin>
+            </ComboBox>
+         </children>
+      </GridPane>
+   </bottom>
+   <left>
+      <VBox prefHeight="739.0" prefWidth="60.0" BorderPane.alignment="CENTER" />
+   </left>
+   <top>
+      <Pane prefHeight="71.0" prefWidth="800.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="56.0" layoutY="27.0" text="Navn på program..." textFill="#e00c0c" />
+         </children>
+      </Pane>
+   </top>
+   <right>
+      <HBox prefHeight="739.0" prefWidth="34.0" BorderPane.alignment="CENTER" />
+   </right>
+   <center>
+      <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <left>
+            <BarChart BorderPane.alignment="CENTER">
+              <xAxis>
+                <CategoryAxis side="BOTTOM" />
+              </xAxis>
+              <yAxis>
+                <NumberAxis side="LEFT" />
+              </yAxis>
+            </BarChart>
+         </left>
+         <right>
+            <PieChart BorderPane.alignment="CENTER" />
+         </right>
+         <bottom>
+            <Pane prefHeight="102.0" prefWidth="1006.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label alignment="TOP_CENTER" layoutX="28.0" layoutY="6.0" prefHeight="17.0" prefWidth="161.0" text="Reduced mileage in KM:" textFill="SEAGREEN" />
+                  <Label layoutX="45.0" layoutY="43.0" text="Time saved (h/min):" textFill="SEAGREEN" />
+               </children>
+            </Pane>
+         </bottom>
+      </BorderPane>
+   </center>
+</BorderPane>

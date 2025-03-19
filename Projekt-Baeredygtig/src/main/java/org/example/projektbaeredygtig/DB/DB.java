@@ -18,6 +18,19 @@ public class DB
     private static String userName;
     private static String password;
 
+    static Connection getConnection()
+    {
+        try {
+            if (con == null || con.isClosed()) {
+                connect();
+                return con;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return con;
+    }
 
     static{
         Properties prop = new Properties();
@@ -39,7 +52,7 @@ public class DB
         }
     }
 
-    static void connect()
+    private static void connect()
     {
         try{
             if(con == null || con.isClosed()){
