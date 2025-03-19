@@ -4,8 +4,14 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.example.projektbaeredygtig.DB.DB;
+import org.example.projektbaeredygtig.DB.DBCreate;
+import org.example.projektbaeredygtig.DB.DBRead;
 
+import java.awt.*;
 import java.io.IOException;
+
+import static org.example.projektbaeredygtig.DB.DBCreate.createMeasurement;
 
 public class HelloApplication extends Application {
     @Override
@@ -18,7 +24,12 @@ public class HelloApplication extends Application {
     }
 
     public static void main(String[] args) {
-        launch();
+        //launch();
+
+
+        Measurement measurement = new Measurement();
+
+
 
     }
 }

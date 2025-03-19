@@ -79,21 +79,5 @@ public class DB
         }
     }
 
-    public static Connection getConnection()
-    {
-        if(con == null){
-            connect();
-        }
-        try{
-            if(con.isClosed()){
-                System.out.println("Connection is closed");
-                connect();
-            }
-        } catch(SQLException e){
-            System.err.println("Error connecting to database" + e.getMessage());
-        }
-        return con;
-    }
-
 
 }

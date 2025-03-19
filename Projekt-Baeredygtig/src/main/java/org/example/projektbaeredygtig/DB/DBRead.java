@@ -1,4 +1,7 @@
-package org.example.projektbaeredygtig;
+package org.example.projektbaeredygtig.DB;
+
+import org.example.projektbaeredygtig.ColorConverter;
+import org.example.projektbaeredygtig.Measurement;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -35,6 +38,7 @@ public class DBRead {
         catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        DB.disconnect();
         return null;
     }
 
@@ -46,7 +50,7 @@ public class DBRead {
     public static Measurement getMeasurement(Date date)
     {
         Connection conn = DB.getConnection();
-        String sql = "SELECT MeasureID FROM Measurements WHERE MeasureDate = " + date;
+        String sql = "SELECT MeasureID FROM Measurements WHERE MeasuredDate = " + date;
         Measurement measurement = null;
 
         try {
@@ -58,13 +62,14 @@ public class DBRead {
         catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        DB.disconnect();
         return null;
     }
 
     public static String getCityOfBin(int BinID)
     {
         Connection conn = DB.getConnection();
-        String sql = "SELECT City FROM Bins WHERE id = " + BinID;
+        String sql = "SELECT City FROM Bins WHERE BinID = " + BinID;
         Measurement measurement = null;
 
         try {
@@ -77,6 +82,7 @@ public class DBRead {
         catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        DB.disconnect();
         return null;
     }
 }
