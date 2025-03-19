@@ -5,3 +5,4 @@ public enum BinColor{
     YELLOW,
     RED
 }
+
