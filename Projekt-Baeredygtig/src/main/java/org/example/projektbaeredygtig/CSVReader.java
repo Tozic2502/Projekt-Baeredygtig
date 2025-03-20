@@ -49,27 +49,6 @@ public class CSVReader {
             {
                 DBCreate.createMeasurement(measurement);
             }
-
-            /*
-            List<Measurement> a = DBRead.getMeasurements(measurement.getMeasuredDate());
-            System.out.println("-----" + a.size() + "-----");
-            for (Measurement m : a)
-            {
-                System.out.println(m.getBinID());
-                System.out.println(m.getMeasuredDate());
-            }
-
-             */
-
-            /*
-            if (DBRead.getMeasurement(measurement.getBinID(), measurement.getMeasuredDate()) == null)
-            {
-                //DBCreate.createMeasurement(measurement);
-
-
-            }
-
-             */
         }
     }
 }
