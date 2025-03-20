@@ -3,10 +3,7 @@ package org.example.projektbaeredygtig.DBPackage;
 import org.example.projektbaeredygtig.ColorConverter;
 import org.example.projektbaeredygtig.Measurement;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +52,7 @@ public class DBRead {
     public static Measurement getMeasurement(int binID, Date measurementDate)
     {
         Connection conn = DBConnection.getConnection();
-        String sql = "SELECT * FROM Measurements WHERE BinID = ? AND MeasureDate = ?";
+        String sql = "SELECT  FROM Measurements WHERE BinID = ? AND MeasureDate = ?";
         Measurement measurement = null;
 
         try {
@@ -64,8 +61,10 @@ public class DBRead {
             pstmt.setDate(2, measurementDate);
             ResultSet rs = pstmt.executeQuery();
 
+            //System.out.println(rs.getInt(0));
+            /*
             // Creates and returns the measurement from the DB
-            return new Measurement(
+            Measurement ms = new Measurement(
                     rs.getInt(0),
                     rs.getInt(1),
                     rs.getDate(2),
@@ -75,6 +74,10 @@ public class DBRead {
                     rs.getBoolean(6),
                     rs.getFloat(7)
             );
+            rs.close();
+            return ms;
+
+             */
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
@@ -90,12 +93,12 @@ public class DBRead {
     public static List<Measurement> getMeasurements(Date date)
     {
         Connection conn = DBConnection.getConnection();
-        String sql = "SELECT MeasureID FROM Measurements WHERE MeasureDate = " + date;
+        String sql = "SELECT MeasureID FROM Measurements WHERE MeasureDate = '2026-01-01'";
         List<Measurement> measurements = new ArrayList<Measurement>();
 
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setDate(1, date);
+            //pstmt.setDate(1, date);
             ResultSet rs = pstmt.executeQuery();
 
             // Creates and returns the measurement from the DB
@@ -133,5 +136,29 @@ public class DBRead {
             System.out.println(e.getMessage());
         }
         return null;
+    }
+
+    public static boolean doesItExist(int BinID, Date measurementDate)
+    {
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT * FROM Measurements WHERE MeasureDate = ? AND BinID = ?";
+
+        try {
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setDate(1, measurementDate);
+            preparedStatement.setInt(2, BinID);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                if (rs.getInt("MeasureID") > 0)
+                {
+                    return true;
+                }
+                return false;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
     }
 }

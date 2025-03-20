@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import org.example.projektbaeredygtig.DBPackage.DBConnection;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,7 +24,7 @@ public class Controller {
     private TextField weekField = new TextField();
 
     @FXML void initialize() {
-
+        DBConnection.connect();
         TypeBox.getItems().addAll("Year", "Quarters", "Month", "Week");
         TypeBox.setOnAction(event -> typeChoicebox());
         ComboboxYear.getItems().setAll("2001", "2002", "2003", "2004", "2005",
@@ -39,7 +40,7 @@ public class Controller {
         ChoiceboxMonth.setVisible(false);
         ChoiceboxWeek.setVisible(false);
 
-
+        CSVReader.ReadCSV("/home/mikkelgaming/Downloads/dummy_data.csv");
 
     }
 
