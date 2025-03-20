@@ -9,7 +9,7 @@ public class DBCreate
 {
     public static void createMeasurement(Measurement measurement)
     {
-        Connection con = DB.getConnection();
+        Connection con = DBConnection.getConnection();
         String sql = "INSERT INTO Measurements (BinID, MeasuredDate, EmptiedDate, Colour, HazardWaste, BinLevel) VALUES (?,?,?,?,?,?)";
         try
         {
@@ -33,6 +33,6 @@ public class DBCreate
         {
             throw new RuntimeException(e);
         }
-        DB.disconnect();
+        DBConnection.disconnect();
     }
 }

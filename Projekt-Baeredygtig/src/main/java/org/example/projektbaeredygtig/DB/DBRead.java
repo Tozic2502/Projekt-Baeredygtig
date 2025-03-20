@@ -1,4 +1,7 @@
-package org.example.projektbaeredygtig;
+package org.example.projektbaeredygtig.DB;
+
+import org.example.projektbaeredygtig.ColorConverter;
+import org.example.projektbaeredygtig.Measurement;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -16,7 +19,7 @@ public class DBRead {
      */
     public static Measurement getMeasurement(int id)
     {
-         Connection conn = DB.getConnection();
+         Connection conn = DBConnection.getConnection();
          String sql = "SELECT * FROM Measurements WHERE id = " + id;
          Measurement measurement = null;
 
@@ -47,7 +50,7 @@ public class DBRead {
      */
     public static List<Measurement> getMeasurements(Date date)
     {
-        Connection conn = DB.getConnection();
+        Connection conn = DBConnection.getConnection();
         String sql = "SELECT MeasureID FROM Measurements WHERE MeasureDate = " + date;
         List<Measurement> measurements = new ArrayList<Measurement>();
 
@@ -66,7 +69,7 @@ public class DBRead {
 
     public static String getCityOfBin(int BinID)
     {
-        Connection conn = DB.getConnection();
+        Connection conn = DBConnection.getConnection();
         String sql = "SELECT City FROM Bins WHERE id = " + BinID;
         Measurement measurement = null;
 
