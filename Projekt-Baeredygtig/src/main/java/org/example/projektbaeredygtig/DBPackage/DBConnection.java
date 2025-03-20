@@ -1,4 +1,4 @@
-package org.example.projektbaeredygtig;
+package org.example.projektbaeredygtig.DBPackage;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class DB
+public class DBConnection
 {
     private static Connection con;
     private static PreparedStatement ps;
@@ -35,7 +35,7 @@ public class DB
     static{
         Properties prop = new Properties();
 
-        try(InputStream input = DB.class.getClassLoader().getResourceAsStream("db.properties")){
+        try(InputStream input = DBConnection.class.getClassLoader().getResourceAsStream("db.properties")){
             if(input == null){
                 throw new RuntimeException("db.properties not found");
             }
@@ -78,4 +78,6 @@ public class DB
             System.err.println("Error disconnecting from database" + e.getMessage());
         }
     }
+
+
 }
