@@ -15,8 +15,8 @@ public class ColorConverter
     public static BinColor convert(String s)
     {
         return switch (s) {
-            case "yellow" -> BinColor.YELLOW;
-            case "red" -> BinColor.RED;
+            case "Yellow LED" -> BinColor.YELLOW;
+            case "Red LED" -> BinColor.RED;
             default -> BinColor.GREEN;
         };
     }
