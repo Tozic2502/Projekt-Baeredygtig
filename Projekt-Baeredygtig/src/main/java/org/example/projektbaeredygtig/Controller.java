@@ -6,12 +6,17 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import org.example.projektbaeredygtig.DBPackage.DBConnection;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.YearMonth;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
@@ -40,8 +45,7 @@ public class Controller {
         DBConnection.connect();
         TypeBox.getItems().addAll("Year", "Quarters", "Month", "Week");
         TypeBox.setOnAction(event -> typeChoicebox());
-        ComboboxYear.getItems().setAll("2001", "2002", "2003", "2004", "2005",
-                "2006", "2007", "2008", "2009", "2010");
+        ComboboxYear.getItems().setAll("2020", "2021", "2022", "2023", "2024", "2025");
         ChoiceboxMonth.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal.intValue() >= 0) {
                 updateWeeks(newVal.intValue() + 1); // Convert index (0-11) to month number (1-12)
@@ -251,30 +255,126 @@ public class Controller {
             System.out.println("Detected Week: " + week);
         }
     }
+
     @FXML
     private void showGraphs(){
         String selectedType = TypeBox.getValue();
+        String selectedYear = ComboboxYear.getValue();
+        String selectedQuarter = ChoiceboxMonth.getValue();
+        String selectedMonth = ChoiceboxMonth.getValue();
+        String selectedWeek = ChoiceboxWeek.getValue();
+
+        if (selectedType == null || selectedYear == null) {
+            System.out.println("Invalid choice, try again!");
+            return;
+        }
+
+        barChart.getData().clear();
+
+        //Gemmer farveværdierne fra DB
+        List<Integer> colours = new ArrayList<>();
+
+        // Start af SQL til at hente farverne fra DB ud fra valgte år, kvartal, måned eller uge.
+        String query = "SELECT Colour FROM Measurements WHERE YEAR(MeasureDate) = ?";
+
+        if ("Quarters".equals(selectedType)) {
+            query += " AND DATEPART(QUARTER, MeasureDate) = ?";
+        } else if ("Month".equals(selectedType)) {
+            query += " AND MONTH(MeasureDate) = ?";
+        } else if ("Week".equals(selectedType)) {
+            query += " AND DATEPART(WEEK, MeasureDate) = ?";
+        }
+
+        //Forbindelse til DB og forebred query til bruger input
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, selectedYear); //Valget af år til query
+
+            if ("Quarters".equals(selectedType)) {
+                stmt.setString(2, selectedQuarter.substring(1)); //Bruger kun tallet fra Quarters og sætter det i query
+            } else if ("Month".equals(selectedType)) {
+                stmt.setString(2, String.valueOf(ChoiceboxMonth.getSelectionModel().getSelectedIndex() + 1)); //Hent måneder som tal jan=1 etc., Obs! SQL bruger ikke 0, så +1
+            } else if ("Week".equals(selectedType)) {
+                stmt.setString(2, selectedWeek);
+            }
+
+            //Tjek resultater i DB og gem colour resultaterne.
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                colours.add(rs.getInt("Colour"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        //Loop igennem resulaterne og gem efter farve.
+        int greenCount = 0;
+        int yellowCount = 0;
+        int redCount = 0;
+
+        for (int color : colours) {
+            if (color == 0) greenCount++;
+            else if (color == 1) yellowCount++;
+            else if (color == 2) redCount++;
+        }
+
+        // x-akse tekst ift user input
+        String xLabel = "";
+
+        if ("Year".equals(selectedType)) {
+            xLabel = selectedYear;
+        } else if ("Quarters".equals(selectedType)) {
+            xLabel = selectedYear + " Q" + selectedQuarter.substring(1);
+        } else if ("Month".equals(selectedType)) {
+            xLabel = selectedYear + " " + selectedMonth;
+        } else if ("Week".equals(selectedType)) {
+            xLabel = selectedYear + " Week " + selectedWeek;
+        }
+        System.out.println("xLabel: " + xLabel);
+        System.out.println("Green count: " + greenCount);
+        System.out.println("Yellow count: " + yellowCount);
+        System.out.println("Red count: " + redCount);
+
+
+        //Opret colour værdierne fra DB til grafen.
+        XYChart.Series<String, Number> greenSeries = new XYChart.Series<>();
+        greenSeries.setName("Almost full");
+        greenSeries.getData().add(new XYChart.Data<>(xLabel, greenCount));
+
+        XYChart.Series<String, Number> yellowSeries = new XYChart.Series<>();
+        yellowSeries.setName("Emptied");
+        yellowSeries.getData().add(new XYChart.Data<>(xLabel, yellowCount));
+
+        XYChart.Series<String, Number> redSeries = new XYChart.Series<>();
+        redSeries.setName("Don't empty");
+        redSeries.getData().add(new XYChart.Data<>(xLabel, redCount));
+
+        barChart.getData().addAll(greenSeries, yellowSeries, redSeries);
+
+
+        /*String selectedType = TypeBox.getValue();
 
         if (selectedType == null){
             System.out.println("ERROR: Type or Year is null!");
         }
 
-        CategoryAxis xAxis = new CategoryAxis();
-        xAxis.setLabel("Time");
+        barChart.getData().clear();
+        XYChart.Series<String, Number> series = new XYChart.Series();
+        series.setName("Graphs");
 
-        CategoryAxis yAxis = new CategoryAxis();
-        yAxis.setLabel("Level");
-
-        barChart = new BarChart(xAxis, yAxis);
-        XYChart.Series greenSeries= new XYChart.Series();
-        greenSeries.setName("Don't empty");
-
+        try(Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement("select Colour from ")
 
         switch (selectedType) {
             case "Year":
                 String selectedYear = ComboboxYear.getValue();
-                System.out.println(selectedYear);
 
+
+                System.out.println(selectedYear);
                 break;
             case "Quarters":
                 String selectedQuarter = ChoiceboxMonth.getValue();
@@ -290,8 +390,9 @@ public class Controller {
                 break;
            default:
                System.out.println("Invalid choice");
-        }
+        }*/
     }
+
     @FXML
     private void UploadFile(){
         FileChooser fileChooser = new FileChooser();
