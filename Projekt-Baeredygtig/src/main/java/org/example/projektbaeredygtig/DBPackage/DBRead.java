@@ -20,7 +20,7 @@ public class DBRead {
     public static Measurement getMeasurement(int id)
     {
          Connection conn = DBConnection.getConnection();
-         String sql = "SELECT * FROM Measurements WHERE id = " + id;
+         String sql = "SELECT * FROM Measurements WHERE MeasureID = " + id;
          Measurement measurement = null;
 
         try {
@@ -55,26 +55,30 @@ public class DBRead {
     public static Measurement getMeasurement(int binID, Date measurementDate)
     {
         Connection conn = DBConnection.getConnection();
-        String sql = "SELECT * FROM Measurements WHERE BinID = ? AND MeasureDate = ?";
+        String sql = "SELECT * FROM Measurements WHERE BinID = ? AND MeasuredDate = ?";
         Measurement measurement = null;
 
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, binID);
-            pstmt.setDate(2, measurementDate);
+            pstmt.setDate(2, new java.sql.Date(measurementDate.getTime()));
             ResultSet rs = pstmt.executeQuery();
 
-            // Creates and returns the measurement from the DB
-            return new Measurement(
-                    rs.getInt(0),
-                    rs.getInt(1),
-                    rs.getDate(2),
-                    rs.getDate(3),
-                    ColorConverter.convert(rs.getInt(4)),
-                    rs.getBoolean(5),
-                    rs.getBoolean(6),
-                    rs.getFloat(7)
-            );
+            if(rs.next())
+            {
+                System.out.println("Measurement found " + rs.getInt(1));
+                // Creates and returns the measurement from the DB
+                return new Measurement(
+                        rs.getInt(1),
+                        rs.getInt(2),
+                        rs.getDate(3),
+                        rs.getDate(4),
+                        ColorConverter.convert(rs.getInt(5)),
+                        rs.getBoolean(6),
+                        rs.getFloat(7)
+                );
+
+            }
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
@@ -90,7 +94,7 @@ public class DBRead {
     public static List<Measurement> getMeasurements(Date date)
     {
         Connection conn = DBConnection.getConnection();
-        String sql = "SELECT MeasureID FROM Measurements WHERE MeasureDate = " + date;
+        String sql = "SELECT MeasureID FROM Measurements WHERE MeasuredDate = " + date;
         List<Measurement> measurements = new ArrayList<Measurement>();
 
         try {
@@ -119,7 +123,7 @@ public class DBRead {
     public static String getCityOfBin(int BinID)
     {
         Connection conn = DBConnection.getConnection();
-        String sql = "SELECT City FROM Bins WHERE id = " + BinID;
+        String sql = "SELECT City FROM Bins WHERE BinID = " + BinID;
         Measurement measurement = null;
 
         try {

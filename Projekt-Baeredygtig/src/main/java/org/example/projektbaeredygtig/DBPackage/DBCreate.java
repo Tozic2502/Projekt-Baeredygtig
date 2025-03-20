@@ -19,6 +19,7 @@ public class DBCreate
             ps.setDate(3, measurement.getEmptiedDate());
             ps.setInt(4, measurement.getColor().ordinal());
             ps.setBoolean(5, measurement.getHazardWaste());
+            ps.setFloat(6, measurement.getBinLevel());
 
             int affectedRows = ps.executeUpdate();
             if(affectedRows > 0)

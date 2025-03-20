@@ -2,6 +2,7 @@ package org.example.projektbaeredygtig;
 
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
@@ -14,7 +15,8 @@ public class Controller {
     @FXML Button ModeToggle;
     @FXML GridPane gridPane;
     @FXML Label MonthLabel, WeekLabel;
-    @FXML BarChart BarChart;
+    @FXML BarChart barChart;
+    @FXML PieChart pieChart;
 
     private boolean isAdvancedMode = false;
     private TextField typeField = new TextField();
@@ -24,8 +26,9 @@ public class Controller {
 
     @FXML void initialize() {
 
+
         TypeBox.getItems().addAll("Year", "Quarters", "Month", "Week");
-        TypeBox.setOnAction(event -> typeChoicebox());
+        TypeBox.setOnAction(event -> typeChoiceBox());
         ComboboxYear.getItems().setAll("2001", "2002", "2003", "2004", "2005",
                 "2006", "2007", "2008", "2009", "2010");
         ChoiceboxWeek.getItems().setAll(
@@ -38,7 +41,6 @@ public class Controller {
         );
         ChoiceboxMonth.setVisible(false);
         ChoiceboxWeek.setVisible(false);
-
 
 
     }
@@ -64,7 +66,7 @@ public class Controller {
         } else {
             System.out.println("Switch Mode box");
             switchToComboBoxes();
-            typeChoicebox();
+            typeChoiceBox();
             MonthLabel.setText("Choose month");
             WeekLabel.setText("Choose week");
             ModeToggle.setText("Advanced");
@@ -97,7 +99,7 @@ public class Controller {
         yearField.setVisible(false);
         weekField.setVisible(false);
         monthField.textProperty().addListener((observable, oldValue, newValue) -> {
-            typeChoicetext(newValue);
+            typeChoiceText(newValue);
         });
 
     }
@@ -129,7 +131,7 @@ public class Controller {
 
 
     @FXML
-    private void typeChoicebox() {
+    private void typeChoiceBox() {
         if (ComboboxYear == null || TypeBox == null) {
             System.out.println("ERROR: ComboboxYear or TypeBox is null!");
             return;
@@ -171,7 +173,7 @@ public class Controller {
      * This method prints out what was detected; you can replace the
      * print statements with your own processing logic.
      */
-    private void typeChoicetext(String input) {
+    private void typeChoiceText(String input) {
         if (input == null || input.trim().isEmpty()) {
             return; // nothing to process
         }
@@ -233,26 +235,5 @@ public class Controller {
     }
 
 
-    @FXML
-    private void optimiseLabel() {
-
-        //display label
-    }
-    private void calcOptimise(){
-        int fullRoutekm = 80;
-        int fullRoutetime = 90;
-
-        //calc functions for label
-
-    }
-    @FXML
-    private void changeBarchart(){
-        //input data and change for the bar chart
-
-    }
-    @FXML
-    private void changePieChart(){
-        //input data and change
-    }
 
 }

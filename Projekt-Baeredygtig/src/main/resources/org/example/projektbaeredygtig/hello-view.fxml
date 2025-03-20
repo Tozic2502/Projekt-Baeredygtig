@@ -107,7 +107,7 @@
             </BarChart>
          </left>
          <right>
-            <PieChart BorderPane.alignment="CENTER" />
+            <PieChart fx:id="pieChart" BorderPane.alignment="CENTER" />
          </right>
          <bottom>
             <Pane prefHeight="102.0" prefWidth="1006.0" BorderPane.alignment="CENTER">
