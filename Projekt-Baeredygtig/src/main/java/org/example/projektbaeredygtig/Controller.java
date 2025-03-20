@@ -1,6 +1,7 @@
 package org.example.projektbaeredygtig;
 
 import javafx.fxml.FXML;
+import javafx.scene.chart.BarChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
@@ -13,6 +14,8 @@ public class Controller {
     @FXML Button ModeToggle;
     @FXML GridPane gridPane;
     @FXML Label MonthLabel, WeekLabel;
+    @FXML BarChart BarChart;
+
     private boolean isAdvancedMode = false;
     private TextField typeField = new TextField();
     private TextField yearField = new TextField();
