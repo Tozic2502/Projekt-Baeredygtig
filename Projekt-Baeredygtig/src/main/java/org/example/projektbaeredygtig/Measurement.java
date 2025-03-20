@@ -31,7 +31,7 @@ public class Measurement {
         FoodWaste = foodWaste;
     }
 
-    public Measurement(int MeasureID, int BinID, Date MeasuredDate, Date EmptiedDate, BinColor Color, Boolean HazardWaste, float BinLevel)
+    public Measurement(int MeasureID, int BinID, Date MeasuredDate, Date EmptiedDate, BinColor Color, Boolean HazardWaste, Boolean FoodWaste, float BinLevel)
     {
         this.MeasureID = MeasureID;
         this.BinID = BinID;
@@ -39,6 +39,7 @@ public class Measurement {
         this.EmptiedDate = EmptiedDate;
         this.Color = Color;
         this.HazardWaste = HazardWaste;
+        this.FoodWaste = FoodWaste;
         this.BinLevel = BinLevel;
     }
 

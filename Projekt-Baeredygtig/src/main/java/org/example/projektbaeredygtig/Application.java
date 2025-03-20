@@ -3,8 +3,10 @@ package org.example.projektbaeredygtig;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.example.projektbaeredygtig.DBPackage.DBRead;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.time.LocalDate;
 
 public class Application extends javafx.application.Application {
@@ -23,7 +25,9 @@ public class Application extends javafx.application.Application {
     }
 
     public static void main(String[] args) {
-        launch();
+        //launch();
+
+        System.out.println(DBRead.getCityOfBin(1));
     }
 
 }

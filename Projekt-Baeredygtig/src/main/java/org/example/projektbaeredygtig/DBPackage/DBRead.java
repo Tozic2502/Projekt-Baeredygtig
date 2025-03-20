@@ -11,30 +11,30 @@ public class DBRead {
 
     /**
      * Attempts to get an existing measurement from the Database.
-     * @param id MeasureID
+     * @param BinID MeasureID
      * @return Measurement object with the variables from the Database.
      */
-    public static Measurement getMeasurement(int id)
+    public static Measurement getMeasurement(int BinID)
     {
          Connection conn = DBConnection.getConnection();
-         String sql = "SELECT * FROM Measurements WHERE id = " + id;
+         String sql = "SELECT * FROM Measurements WHERE BinID = " + BinID;
          Measurement measurement = null;
 
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, id);
+            pstmt.setInt(1, BinID);
             ResultSet rs = pstmt.executeQuery();
 
             // Creates and returns the measurement from the DB
             return new Measurement(
-                    rs.getInt(0),
-                    rs.getInt(1),
-                    rs.getDate(2),
-                    rs.getDate(3),
-                    ColorConverter.convert(rs.getInt(4)),
-                    rs.getBoolean(5),
-                    rs.getBoolean(6),
-                    rs.getFloat(7)
+                    rs.getInt(0), //MeasureID
+                    rs.getInt(1), //BinID
+                    rs.getDate(2), //MeasureDate
+                    rs.getDate(3), //EmptiedDate
+                    ColorConverter.convert(rs.getInt(4)), //Colour
+                    rs.getBoolean(5), //HazardWaste
+                    rs.getBoolean(6), //FoodWaste
+                    rs.getFloat(7) // BinLevel
             );
         }
         catch (Exception e) {

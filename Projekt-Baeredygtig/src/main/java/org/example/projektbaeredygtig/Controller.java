@@ -40,7 +40,7 @@ public class Controller {
         ChoiceboxMonth.setVisible(false);
         ChoiceboxWeek.setVisible(false);
 
-        CSVReader.ReadCSV("/home/mikkelgaming/Downloads/dummy_data.csv");
+        CSVReader.ReadCSV("/C:/temp/data/dummy_data.csv/");
 
     }
 
