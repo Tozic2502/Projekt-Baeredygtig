@@ -301,7 +301,7 @@ public class Controller {
             case "Month":
                 String selectedMonth = ChoiceboxMonth.getValue();
                 year = ComboboxYear.getValue();
-                int month = YearMonth.parse(year + "-" + selectedMonth).getMonthValue();
+                int month = convertMonthNameToNumber(selectedMonth);
                 startDate = Date.valueOf(year + "-" + String.format("%02d", month) + "-01");
                 endDate = Date.valueOf(year + "-" + String.format("%02d", month) + "-" + YearMonth.of(Integer.parseInt(year), month).lengthOfMonth());
                 break;
@@ -309,18 +309,37 @@ public class Controller {
                 String selectedWeek = ChoiceboxWeek.getValue();
                 year = ComboboxYear.getValue();
                 selectedMonth = ChoiceboxMonth.getValue();
-                month = YearMonth.parse(year + "-" + selectedMonth).getMonthValue();
+                month = convertMonthNameToNumber(selectedMonth);
                 int week = Integer.parseInt(selectedWeek);
-                LocalDate firstDayOfWeek = YearMonth.of(Integer.parseInt(year), month).atDay(1).with(WeekFields.of(Locale.getDefault()).weekOfMonth(), week);
+
+                // Determine available weeks in the selected month
+                YearMonth yearMonth = YearMonth.of(Integer.parseInt(year), month);
+                int maxWeeks = yearMonth.atEndOfMonth().get(WeekFields.of(Locale.getDefault()).weekOfMonth());
+
+                // Validate the selected week number
+                if (week < 1 || week > maxWeeks) {
+                    System.out.println("Invalid week number for the selected month.");
+                    return;
+                }
+
+                // Calculate the start and end dates for the selected week
+                LocalDate firstDayOfWeek = yearMonth.atDay(1).with(WeekFields.of(Locale.getDefault()).weekOfMonth(), week);
+                LocalDate lastDayOfWeek = firstDayOfWeek.plusDays(6);
+
+                // Ensure the last day of the week does not exceed the end of the month
+                if (lastDayOfWeek.getMonthValue() != month) {
+                    lastDayOfWeek = yearMonth.atEndOfMonth();
+                }
+
                 startDate = Date.valueOf(firstDayOfWeek);
-                endDate = Date.valueOf(firstDayOfWeek.plusDays(6));
+                endDate = Date.valueOf(lastDayOfWeek);
                 break;
             default:
                 System.out.println("Invalid choice");
                 return;
         }
 
-        // Retrieve color data
+        // Retrieve color data for the pie chart
         Map<BinColor, Long> colorData = DBRead.getColorData(startDate, endDate);
 
         // Populate the pie chart
@@ -329,7 +348,66 @@ public class Controller {
             pieChartData.add(new PieChart.Data(entry.getKey().name(), entry.getValue()));
         }
         pieChart.setData(pieChartData);
+
+        // Populate the bar chart based on bin measure data
+        Map<String, Map<BinColor, Long>> binMeasureData = DBRead.getBinMeasureDataForPeriod(startDate, endDate);
+        populateBarChart(binMeasureData);
     }
+
+
+
+
+    private int convertMonthNameToNumber(String monthName) {
+        switch (monthName) {
+            case "January":
+                return 1;
+            case "February":
+                return 2;
+            case "March":
+                return 3;
+            case "April":
+                return 4;
+            case "May":
+                return 5;
+            case "June":
+                return 6;
+            case "July":
+                return 7;
+            case "August":
+                return 8;
+            case "September":
+                return 9;
+            case "October":
+                return 10;
+            case "November":
+                return 11;
+            case "December":
+                return 12;
+            default:
+                throw new IllegalArgumentException("Invalid month name: " + monthName);
+        }
+    }
+
+
+    private void populateBarChart(Map<String, Map<BinColor, Long>> data) {
+        XYChart.Series<String, Number> greenSeries = new XYChart.Series<>();
+        greenSeries.setName("Green");
+        XYChart.Series<String, Number> yellowSeries = new XYChart.Series<>();
+        yellowSeries.setName("Yellow");
+        XYChart.Series<String, Number> redSeries = new XYChart.Series<>();
+        redSeries.setName("Red");
+
+        for (String binId : data.keySet()) {
+            Map<BinColor, Long> colorCountMap = data.get(binId);
+            greenSeries.getData().add(new XYChart.Data<>(binId, colorCountMap.getOrDefault(BinColor.GREEN, 0L)));
+            yellowSeries.getData().add(new XYChart.Data<>(binId, colorCountMap.getOrDefault(BinColor.YELLOW, 0L)));
+            redSeries.getData().add(new XYChart.Data<>(binId, colorCountMap.getOrDefault(BinColor.RED, 0L)));
+        }
+
+        barChart.getData().clear();
+        barChart.getData().addAll(greenSeries, yellowSeries, redSeries);
+    }
+
 
     @FXML
     private void UploadFile(){

@@ -5,6 +5,7 @@ import org.example.projektbaeredygtig.ColorConverter;
 import org.example.projektbaeredygtig.Measurement;
 
 import java.sql.*;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -86,6 +87,34 @@ public class DBRead {
         return null;
     }
 
+    public static Map<String, Map<BinColor, Long>> getBinMeasureDataForPeriod(Date startDate, Date endDate) {
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT BinID, Color, COUNT(*) " +
+                "FROM Measurements " +
+                "WHERE MeasureDate BETWEEN ? AND ? " +
+                "GROUP BY BinID, Color";
+        Map<String, Map<BinColor, Long>> binMeasureData = new HashMap<>();
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setDate(1, startDate);
+            pstmt.setDate(2, endDate);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                String binId = rs.getString("BinID");
+                BinColor color = ColorConverter.convert(rs.getInt("Color"));
+                long count = rs.getLong(3);
+
+                binMeasureData.computeIfAbsent(binId, k -> new HashMap<>()).put(color, count);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving bin measure data: " + e.getMessage());
+        }
+        return binMeasureData;
+    }
+
+
+
     /**
      * Attempts to get all existing measurement from the Database with a date matching the input.
      * @param date of measurement
@@ -121,6 +150,8 @@ public class DBRead {
         }
         return measurements;
     }
+
+
 
     public static String getCityOfBin(int BinID)
     {
@@ -223,5 +254,75 @@ public class DBRead {
             System.out.println("Error retrieving color data: " + e.getMessage());
         }
         return colorCountMap;
+    }
+
+    public static Map<String, Map<BinColor, Long>> getMonthlyColorDataForQuarter(int year, String quarter) {
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT MONTH(MeasureDate) AS Month, Color, COUNT(*) FROM Measurements WHERE YEAR(MeasureDate) = ? AND QUARTER(MeasureDate) = ? GROUP BY MONTH(MeasureDate), Color";
+        Map<String, Map<BinColor, Long>> monthlyColorData = new HashMap<>();
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, year);
+            pstmt.setString(2, quarter);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                String month = YearMonth.of(year, rs.getInt("Month")).getMonth().name();
+                BinColor color = ColorConverter.convert(rs.getInt("Color"));
+                long count = rs.getLong(3);
+
+                monthlyColorData.computeIfAbsent(month, k -> new HashMap<>()).put(color, count);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving monthly color data for quarter: " + e.getMessage());
+        }
+        return monthlyColorData;
+    }
+
+    public static Map<String, Map<BinColor, Long>> getWeeklyColorDataForMonth(int year, int month) {
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT WEEK(MeasureDate) AS Week, Color, COUNT(*) FROM Measurements WHERE YEAR(MeasureDate) = ? AND MONTH(MeasureDate) = ? GROUP BY WEEK(MeasureDate), Color";
+        Map<String, Map<BinColor, Long>> weeklyColorData = new HashMap<>();
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, year);
+            pstmt.setInt(2, month);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                String week = "Week " + rs.getInt("Week");
+                BinColor color = ColorConverter.convert(rs.getInt("Color"));
+                long count = rs.getLong(3);
+
+                weeklyColorData.computeIfAbsent(week, k -> new HashMap<>()).put(color, count);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving weekly color data for month: " + e.getMessage());
+        }
+        return weeklyColorData;
+    }
+
+    public static Map<String, Map<BinColor, Long>> getDailyColorDataForWeek(int year, int month, int week) {
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT DAY(MeasureDate) AS Day, Color, COUNT(*) FROM Measurements WHERE YEAR(MeasureDate) = ? AND MONTH(MeasureDate) = ? AND WEEK(MeasureDate) = ? GROUP BY DAY(MeasureDate), Color";
+        Map<String, Map<BinColor, Long>> dailyColorData = new HashMap<>();
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, year);
+            pstmt.setInt(2, month);
+            pstmt.setInt(3, week);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                String day = "Day " + rs.getInt("Day");
+                BinColor color = ColorConverter.convert(rs.getInt("Color"));
+                long count = rs.getLong(3);
+
+                dailyColorData.computeIfAbsent(day, k -> new HashMap<>()).put(color, count);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving daily color data for week: " + e.getMessage());
+        }
+        return dailyColorData;
     }
 }
