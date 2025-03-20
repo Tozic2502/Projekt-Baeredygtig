@@ -1,4 +1,4 @@
-package org.example.projektbaeredygtig.DB;
+package org.example.projektbaeredygtig.DBPackage;
 
 import java.io.IOException;
 import java.io.InputStream;

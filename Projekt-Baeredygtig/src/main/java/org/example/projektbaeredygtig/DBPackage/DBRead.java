@@ -1,4 +1,4 @@
-package org.example.projektbaeredygtig.DB;
+package org.example.projektbaeredygtig.DBPackage;
 
 import org.example.projektbaeredygtig.ColorConverter;
 import org.example.projektbaeredygtig.Measurement;
