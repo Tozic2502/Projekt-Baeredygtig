@@ -33,14 +33,14 @@ public class CSVReader {
             String[] parts = line.split(",");
             Measurement measurement = new Measurement();
             // Date time
-            String dtime = parts[0].substring(0, parts[0].indexOf(" "));
-            measurement.setMeasuredDate(Date.valueOf(dtime));    // MeasuredDate
+            String dTime = parts[0].substring(0, parts[0].indexOf(" "));
+            measurement.setMeasuredDate(Date.valueOf(dTime));    // MeasuredDate
             measurement.setBinID(Integer.parseInt(parts[1]));       // BinID
 
             measurement.setColor(ColorConverter.convert(parts[5])); // BinColor
             measurement.setHazardWaste(Boolean.parseBoolean(parts[6])); // HazardWaste
             measurement.setFoodWaste(Boolean.parseBoolean(parts[7]));
-            measurement.setLevel(Float.parseFloat(parts[8]));
+            measurement.setBinLevel(Float.parseFloat(parts[8]));
         }
     }
 }

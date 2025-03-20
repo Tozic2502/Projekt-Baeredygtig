@@ -14,7 +14,7 @@ public class DBRead {
 
     /**
      * Attempts to get an existing measurement from the Database.
-     * @param id ID of the measurement
+     * @param id MeasureID
      * @return Measurement object with the variables from the Database.
      */
     public static Measurement getMeasurement(int id)
@@ -25,6 +25,7 @@ public class DBRead {
 
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, id);
             ResultSet rs = pstmt.executeQuery();
 
             // Creates and returns the measurement from the DB
@@ -34,7 +35,45 @@ public class DBRead {
                     rs.getDate(2),
                     rs.getDate(3),
                     ColorConverter.convert(rs.getInt(4)),
-                    rs.getBoolean(5)
+                    rs.getBoolean(5),
+                    rs.getBoolean(6),
+                    rs.getFloat(7)
+            );
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Attempts to get an existing measurement from the Database.
+     * @param binID BinID.
+     * @param measurementDate Date of measurement.
+     * @return Measurement object with the variables from the Database.
+     */
+    public static Measurement getMeasurement(int binID, Date measurementDate)
+    {
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT * FROM Measurements WHERE BinID = ? AND MeasureDate = ?";
+        Measurement measurement = null;
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, binID);
+            pstmt.setDate(2, measurementDate);
+            ResultSet rs = pstmt.executeQuery();
+
+            // Creates and returns the measurement from the DB
+            return new Measurement(
+                    rs.getInt(0),
+                    rs.getInt(1),
+                    rs.getDate(2),
+                    rs.getDate(3),
+                    ColorConverter.convert(rs.getInt(4)),
+                    rs.getBoolean(5),
+                    rs.getBoolean(6),
+                    rs.getFloat(7)
             );
         }
         catch (Exception e) {
@@ -56,10 +95,20 @@ public class DBRead {
 
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setDate(1, date);
             ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                measurements.add(getMeasurement(rs.getInt(0)));
-            }
+
+            // Creates and returns the measurement from the DB
+            measurements.add(new Measurement(
+                    rs.getInt(0),
+                    rs.getInt(1),
+                    rs.getDate(2),
+                    rs.getDate(3),
+                    ColorConverter.convert(rs.getInt(4)),
+                    rs.getBoolean(5),
+                    rs.getBoolean(6),
+                    rs.getFloat(7)
+            ));
         }
         catch (Exception e) {
             System.out.println(e.getMessage());

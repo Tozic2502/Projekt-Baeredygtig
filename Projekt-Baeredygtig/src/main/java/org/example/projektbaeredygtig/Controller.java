@@ -1,7 +1,7 @@
 package org.example.projektbaeredygtig;
 
 import javafx.fxml.FXML;
-import javafx.scene.chart.PieChart;
+import javafx.scene.chart.BarChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
@@ -14,7 +14,8 @@ public class Controller {
     @FXML Button ModeToggle;
     @FXML GridPane gridPane;
     @FXML Label MonthLabel, WeekLabel;
-    @FXML PieChart pieChart;
+    @FXML BarChart BarChart;
+
     private boolean isAdvancedMode = false;
     private TextField typeField = new TextField();
     private TextField yearField = new TextField();
@@ -37,7 +38,8 @@ public class Controller {
         );
         ChoiceboxMonth.setVisible(false);
         ChoiceboxWeek.setVisible(false);
-        pieChart.setVisible(false);
+
+
 
     }
 
@@ -250,6 +252,7 @@ public class Controller {
     }
     @FXML
     private void changePieChart(){
-
+        //input data and change
     }
+
 }
