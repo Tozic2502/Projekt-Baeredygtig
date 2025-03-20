@@ -231,7 +231,10 @@ public class Controller {
             System.out.println("Detected Week: " + week);
         }
     }
+    @FXML
+    private void showGraphs(){
 
+    }
 
     @FXML
     private void optimiseLabel() {
