@@ -52,9 +52,9 @@ public class Controller {
 
         ChoiceboxMonth.setVisible(false);
         ChoiceboxWeek.setVisible(false);
-
-        CSVReader.ReadCSV(getFilePath());
-
+        if (!getFilePath().equals("")) {
+            CSVReader.ReadCSV(getFilePath());
+        }
     }
 
     @FXML
@@ -171,6 +171,10 @@ public class Controller {
         } else if ("Week".equals(selectedType)) {
             ChoiceboxMonth.setVisible(true);
             ChoiceboxWeek.setVisible(true);
+            ChoiceboxMonth.getItems().setAll(
+                    "January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"
+            );
         }
     }
     /**
@@ -262,6 +266,7 @@ public class Controller {
             filePath = file.getAbsolutePath();
 
             System.out.println("Selected File: " + filePath); // Debugging output
+            CSVReader.ReadCSV(filePath);
         }
     }
 
