@@ -1,11 +1,14 @@
 package org.example.projektbaeredygtig.DBPackage;
 
+import org.example.projektbaeredygtig.BinColor;
 import org.example.projektbaeredygtig.ColorConverter;
 import org.example.projektbaeredygtig.Measurement;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DBRead {
 
@@ -199,5 +202,26 @@ public class DBRead {
             throw new RuntimeException(e);
         }
         return date;
+    }
+
+    public static Map<BinColor, Long> getColorData(Date startDate, Date endDate) {
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT Color, COUNT(*) FROM Measurements WHERE MeasureDate BETWEEN ? AND ? GROUP BY Color";
+        Map<BinColor, Long> colorCountMap = new HashMap<>();
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setDate(1, startDate);
+            pstmt.setDate(2, endDate);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                BinColor color = ColorConverter.convert(rs.getInt("Color"));
+                long count = rs.getLong(2);
+                colorCountMap.put(color, count);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving color data: " + e.getMessage());
+        }
+        return colorCountMap;
     }
 }

@@ -1,22 +1,28 @@
 package org.example.projektbaeredygtig;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import org.example.projektbaeredygtig.DBPackage.DBConnection;
+import org.example.projektbaeredygtig.DBPackage.DBRead;
 
 import java.io.File;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,6 +34,7 @@ public class Controller {
     @FXML Label MonthLabel, WeekLabel;
     @FXML Button button;
     @FXML BarChart<String, Number> barChart;
+    @FXML PieChart pieChart;
 
     private boolean isAdvancedMode = false;
     private TextField typeField = new TextField();
@@ -251,47 +258,79 @@ public class Controller {
             System.out.println("Detected Week: " + week);
         }
     }
-    @FXML
-    private void showGraphs(){
-        String selectedType = TypeBox.getValue();
 
-        if (selectedType == null){
+    @FXML
+    private void showGraphs() {
+        String selectedType = TypeBox.getValue();
+        if (selectedType == null) {
             System.out.println("ERROR: Type or Year is null!");
+            return;
         }
 
-        CategoryAxis xAxis = new CategoryAxis();
-        xAxis.setLabel("Time");
-
-        CategoryAxis yAxis = new CategoryAxis();
-        yAxis.setLabel("Level");
-
-        barChart = new BarChart(xAxis, yAxis);
-        XYChart.Series greenSeries= new XYChart.Series();
-        greenSeries.setName("Don't empty");
-
+        Date startDate = null;
+        Date endDate = null;
 
         switch (selectedType) {
             case "Year":
                 String selectedYear = ComboboxYear.getValue();
-                System.out.println(selectedYear);
-
+                startDate = Date.valueOf(selectedYear + "-01-01");
+                endDate = Date.valueOf(selectedYear + "-12-31");
                 break;
             case "Quarters":
                 String selectedQuarter = ChoiceboxMonth.getValue();
-                System.out.println(selectedQuarter);
+                String year = ComboboxYear.getValue();
+                switch (selectedQuarter) {
+                    case "Q1":
+                        startDate = Date.valueOf(year + "-01-01");
+                        endDate = Date.valueOf(year + "-03-31");
+                        break;
+                    case "Q2":
+                        startDate = Date.valueOf(year + "-04-01");
+                        endDate = Date.valueOf(year + "-06-30");
+                        break;
+                    case "Q3":
+                        startDate = Date.valueOf(year + "-07-01");
+                        endDate = Date.valueOf(year + "-09-30");
+                        break;
+                    case "Q4":
+                        startDate = Date.valueOf(year + "-10-01");
+                        endDate = Date.valueOf(year + "-12-31");
+                        break;
+                }
                 break;
             case "Month":
                 String selectedMonth = ChoiceboxMonth.getValue();
-                System.out.println(selectedMonth);
+                year = ComboboxYear.getValue();
+                int month = YearMonth.parse(year + "-" + selectedMonth).getMonthValue();
+                startDate = Date.valueOf(year + "-" + String.format("%02d", month) + "-01");
+                endDate = Date.valueOf(year + "-" + String.format("%02d", month) + "-" + YearMonth.of(Integer.parseInt(year), month).lengthOfMonth());
                 break;
             case "Week":
                 String selectedWeek = ChoiceboxWeek.getValue();
-                System.out.println(selectedWeek);
+                year = ComboboxYear.getValue();
+                selectedMonth = ChoiceboxMonth.getValue();
+                month = YearMonth.parse(year + "-" + selectedMonth).getMonthValue();
+                int week = Integer.parseInt(selectedWeek);
+                LocalDate firstDayOfWeek = YearMonth.of(Integer.parseInt(year), month).atDay(1).with(WeekFields.of(Locale.getDefault()).weekOfMonth(), week);
+                startDate = Date.valueOf(firstDayOfWeek);
+                endDate = Date.valueOf(firstDayOfWeek.plusDays(6));
                 break;
-           default:
-               System.out.println("Invalid choice");
+            default:
+                System.out.println("Invalid choice");
+                return;
         }
+
+        // Retrieve color data
+        Map<BinColor, Long> colorData = DBRead.getColorData(startDate, endDate);
+
+        // Populate the pie chart
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+        for (Map.Entry<BinColor, Long> entry : colorData.entrySet()) {
+            pieChartData.add(new PieChart.Data(entry.getKey().name(), entry.getValue()));
+        }
+        pieChart.setData(pieChartData);
     }
+
     @FXML
     private void UploadFile(){
         FileChooser fileChooser = new FileChooser();
@@ -312,6 +351,7 @@ public class Controller {
     public String getFilePath() {
         return filePath; // Allow other parts of the app to get the file path
     }
+
     private void updateWeeks(int month) {
         int year = java.time.Year.now().getValue(); // Get current year (change as needed)
         YearMonth yearMonth = YearMonth.of(year, month);
@@ -327,5 +367,4 @@ public class Controller {
 
         ChoiceboxWeek.setItems(FXCollections.observableArrayList(weeks));
     }
-
 }
