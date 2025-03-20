@@ -85,14 +85,17 @@
    <center>
       <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <left>
-            <BarChart BorderPane.alignment="CENTER">
-              <xAxis>
-                <CategoryAxis side="BOTTOM" />
-              </xAxis>
-              <yAxis>
-                <NumberAxis side="LEFT" />
-              </yAxis>
-            </BarChart>
+            <HBox>
+               <BarChart BorderPane.alignment="CENTER">
+                  <xAxis>
+                     <CategoryAxis side="BOTTOM" />
+                  </xAxis>
+                  <yAxis>
+                     <NumberAxis side="LEFT" />
+                  </yAxis>
+               </BarChart>
+               <PieChart fx:id="pieChart" visible="false" />
+            </HBox>
          </left>
          <right>
             <PieChart BorderPane.alignment="CENTER" />
