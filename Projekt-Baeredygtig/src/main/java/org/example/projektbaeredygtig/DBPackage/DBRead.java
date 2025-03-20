@@ -122,7 +122,7 @@ public class DBRead {
     public static String getCityOfBin(int BinID)
     {
         Connection conn = DBConnection.getConnection();
-        String sql = "SELECT City FROM Bins WHERE id = " + BinID;
+        String sql = "SELECT City FROM Bins WHERE BinID = " + BinID;
         Measurement measurement = null;
 
         try {
@@ -132,7 +132,7 @@ public class DBRead {
             // Returns city of the bin.
             if (rs.next())
             {
-                return rs.getString(0);
+                return rs.getString(1);
             }
         }
         catch (Exception e) {

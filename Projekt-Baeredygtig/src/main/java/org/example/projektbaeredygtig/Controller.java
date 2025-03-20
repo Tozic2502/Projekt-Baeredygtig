@@ -2,12 +2,20 @@ package org.example.projektbaeredygtig;
 
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import org.example.projektbaeredygtig.DBPackage.DBConnection;
+import org.example.projektbaeredygtig.DBPackage.DBRead;
 
+import java.util.ArrayList;
+import java.sql.Date;
+import java.util.Collection;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 
 public class Controller {
     @FXML ComboBox<String> ComboboxYear, TypeBox;
@@ -16,6 +24,7 @@ public class Controller {
     @FXML GridPane gridPane;
     @FXML Label MonthLabel, WeekLabel;
     @FXML BarChart BarChart;
+    @FXML PieChart pieChart;
 
     private boolean isAdvancedMode = false;
     private TextField typeField = new TextField();
@@ -232,8 +241,91 @@ public class Controller {
             System.out.println("Detected Week: " + week);
         }
     }
-    @FXML
-    private void showGraphs(){
 
+
+    @FXML
+    private void showGraphs() {
+        String selectedType = TypeBox.getValue();
+        String year = ComboboxYear.getValue();
+        String period = null;
+
+        if ("Year".equals(selectedType)) {
+            period = year;
+        } else if ("Quarters".equals(selectedType)) {
+            period = ChoiceboxMonth.getValue(); // This will be Q1, Q2, etc.
+        } else if ("Month".equals(selectedType)) {
+            period = ChoiceboxMonth.getValue(); // This will be January, February, etc.
+        } else if ("Week".equals(selectedType)) {
+            period = ChoiceboxWeek.getValue(); // This will be the week number
+        }
+
+        if (period != null) {
+            updatePieChart(selectedType, year, period);
+        }
     }
+
+    private void updatePieChart(String type, String year, String period) {
+        // Clear existing data
+        pieChart.getData().clear();
+
+        // Fetch data based on the type and period
+        List<PieChart.Data> data = fetchDataForPieChart(type, year, period);
+
+        // Add data to the pie chart
+        pieChart.getData().addAll(data);
+    }
+
+    private List<PieChart.Data> fetchDataForPieChart(String type, String year, String period) {
+        List<PieChart.Data> data = new ArrayList<>();
+
+        // Determine the date range based on the selected type and period
+        List<Date> dates = getDatesForPeriod(type, year, period);
+
+        for (Date date : dates) {
+            List<Measurement> measurements = DBRead.getMeasurements(date);
+
+            // Process measurements to create pie chart data
+            data.addAll(processMeasurements(measurements));
+        }
+
+        return data;
+    }
+
+    private List<Date> getDatesForPeriod(String type, String year, String period) {
+        List<Date> dates = new ArrayList<>();
+
+        // Implement logic to determine the list of dates based on the selected period
+        // For example, if the period is a month, return all dates in that month
+        // This is a placeholder implementation
+        if ("Year".equals(type)) {
+            // Return all dates in the year
+            dates.add(Date.valueOf(year + "-01-01")); // Example: Add more dates as needed
+        } else if ("Quarters".equals(type)) {
+            // Return all dates in the quarter
+            dates.add(Date.valueOf(year + "-" + period.substring(1) + "-01")); // Example
+        } else if ("Month".equals(type)) {
+            // Return all dates in the month
+            dates.add(Date.valueOf(year + "-" + period + "-01")); // Example
+        } else if ("Week".equals(type)) {
+            // Return all dates in the week
+            dates.add(Date.valueOf(year + "-W" + period + "-1")); // Example: ISO week date format
+        }
+
+        return dates;
+    }
+
+    private List<PieChart.Data> processMeasurements(List<Measurement> measurements) {
+        // Count occurrences of each color
+        long greenCount = measurements.stream().filter(m -> m.getColor() == 0).count();
+        long yellowCount = measurements.stream().filter(m -> m.getColor() == 1).count();
+        long redCount = measurements.stream().filter(m -> m.getColor() == 2).count();
+
+        List<PieChart.Data> data = new ArrayList<>();
+        data.add(new PieChart.Data("Green", greenCount));
+        data.add(new PieChart.Data("Yellow", yellowCount));
+        data.add(new PieChart.Data("Red", redCount));
+
+        return data;
+    }
+
 }
