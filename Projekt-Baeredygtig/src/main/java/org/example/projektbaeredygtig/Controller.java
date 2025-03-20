@@ -250,10 +250,6 @@ public class Controller {
     }
     @FXML
     private void changePieChart(){
-        //input data and change
+
     }
-
-
-
-
 }
