@@ -235,28 +235,4 @@ public class Controller {
     private void showGraphs(){
 
     }
-
-    @FXML
-    private void optimiseLabel() {
-
-        //display label
-    }
-    private void calcOptimise(){
-        int fullRoutekm = 80;
-        int fullRoutetime = 90;
-
-
-        //calc functions for label
-
-    }
-    @FXML
-    private void changeBarchart(){
-        //input data and change for the bar chart
-
-    }
-    @FXML
-    private void changePieChart(){
-        //input data and change
-    }
-
 }
