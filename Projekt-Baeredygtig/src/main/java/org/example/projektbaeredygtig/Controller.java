@@ -2,9 +2,13 @@ package org.example.projektbaeredygtig;
 
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import org.example.projektbaeredygtig.DBPackage.DBConnection;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,7 +18,7 @@ public class Controller {
     @FXML Button ModeToggle;
     @FXML GridPane gridPane;
     @FXML Label MonthLabel, WeekLabel;
-    @FXML BarChart BarChart;
+    @FXML BarChart<String, Number> barChart;
 
     private boolean isAdvancedMode = false;
     private TextField typeField = new TextField();
@@ -28,6 +32,8 @@ public class Controller {
         TypeBox.setOnAction(event -> typeChoicebox());
         ComboboxYear.getItems().setAll("2001", "2002", "2003", "2004", "2005",
                 "2006", "2007", "2008", "2009", "2010");
+        ChoiceboxMonth.getItems().setAll("January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December");
         ChoiceboxWeek.getItems().setAll(
                 "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
                 "11", "12", "13", "14", "15", "16", "17", "18", "19",
@@ -245,11 +251,50 @@ public class Controller {
         //calc functions for label
 
     }
-    @FXML
-    private void changeBarchart(){
-        //input data and change for the bar chart
 
+
+    @FXML
+    public void showGraphs(){
+        String selectedType = TypeBox.getValue();
+
+        if (selectedType == null){
+            System.out.println("ERROR: Type or Year is null!");
+        }
+
+        CategoryAxis xAxis = new CategoryAxis();
+        xAxis.setLabel("Time");
+
+        CategoryAxis yAxis = new CategoryAxis();
+        yAxis.setLabel("Level");
+
+        barChart = new BarChart(xAxis, yAxis);
+        XYChart.Series greenSeries= new XYChart.Series();
+        greenSeries.setName("Don't empty");
+
+
+        switch (selectedType) {
+            case "Year":
+                String selectedYear = ComboboxYear.getValue();
+                System.out.println(selectedYear);
+
+                break;
+            case "Quarters":
+                String selectedQuarter = ChoiceboxMonth.getValue();
+                System.out.println(selectedQuarter);
+                break;
+            case "Month":
+                String selectedMonth = ChoiceboxMonth.getValue();
+                System.out.println(selectedMonth);
+                break;
+            case "Week":
+                String selectedWeek = ChoiceboxWeek.getValue();
+                System.out.println(selectedWeek);
+                break;
+           default:
+               System.out.println("Invalid choice");
+        }
     }
+
     @FXML
     private void changePieChart(){
         //input data and change

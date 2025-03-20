@@ -64,7 +64,7 @@
                   <Insets left="160.0" />
                </GridPane.margin>
             </Button>
-            <Button alignment="CENTER" mnemonicParsing="false" styleClass="gradient-pane" text="Show Graphs" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="1">
+            <Button fx:id="displayGraphs" alignment="CENTER" mnemonicParsing="false" onAction="#showGraphs" styleClass="gradient-pane" text="Show Graphs" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="1">
                <font>
                   <Font name="Modern No. 20" size="14.0" />
                </font>
