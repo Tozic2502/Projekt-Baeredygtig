@@ -164,4 +164,40 @@ public class DBRead {
         }
         return false;
     }
+
+    public static Date MaxDate()
+    {
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT MAX(MeasureDate) FROM Measurements";
+        Date date = null;
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                date = rs.getDate(1);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return date;
+    }
+
+    public static Date MinDate()
+    {
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT MIN(MeasureDate) FROM Measurements";
+        Date date = null;
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                date = rs.getDate(1);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return date;
+    }
 }

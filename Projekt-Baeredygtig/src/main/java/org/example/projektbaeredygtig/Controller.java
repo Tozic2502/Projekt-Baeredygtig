@@ -1,21 +1,24 @@
 package org.example.projektbaeredygtig;
 
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.PieChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 import org.example.projektbaeredygtig.DBPackage.DBConnection;
-import org.example.projektbaeredygtig.DBPackage.DBRead;
 
+import java.io.File;
+import java.time.YearMonth;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
-import java.sql.Date;
-import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 
 public class Controller {
     @FXML ComboBox<String> ComboboxYear, TypeBox;
@@ -23,14 +26,15 @@ public class Controller {
     @FXML Button ModeToggle;
     @FXML GridPane gridPane;
     @FXML Label MonthLabel, WeekLabel;
-    @FXML BarChart BarChart;
-    @FXML PieChart pieChart;
+    @FXML Button button;
+    @FXML BarChart<String, Number> barChart;
 
     private boolean isAdvancedMode = false;
     private TextField typeField = new TextField();
     private TextField yearField = new TextField();
     private TextField monthField = new TextField();
     private TextField weekField = new TextField();
+    private String filePath = "";
 
     @FXML void initialize() {
         DBConnection.connect();
@@ -38,19 +42,21 @@ public class Controller {
         TypeBox.setOnAction(event -> typeChoicebox());
         ComboboxYear.getItems().setAll("2001", "2002", "2003", "2004", "2005",
                 "2006", "2007", "2008", "2009", "2010");
-        ChoiceboxWeek.getItems().setAll(
-                "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-                "11", "12", "13", "14", "15", "16", "17", "18", "19",
-                "20", "21", "22", "23", "24", "25", "26", "27", "28",
-                "29", "30", "31", "32", "33", "34", "35", "36", "37",
-                "38", "39", "40", "41", "42", "43", "44", "45", "46",
-                "47", "48", "49", "50", "51", "52"
+        ChoiceboxMonth.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal.intValue() >= 0) {
+                updateWeeks(newVal.intValue() + 1); // Convert index (0-11) to month number (1-12)
+            }
+        });
+        ChoiceboxMonth.getItems().setAll(
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
         );
+
         ChoiceboxMonth.setVisible(false);
         ChoiceboxWeek.setVisible(false);
-
-        CSVReader.ReadCSV("/C:/temp/data/dummy_data.csv/");
-
+        if (!getFilePath().equals("")) {
+            CSVReader.ReadCSV(getFilePath());
+        }
     }
 
     @FXML
@@ -167,6 +173,10 @@ public class Controller {
         } else if ("Week".equals(selectedType)) {
             ChoiceboxMonth.setVisible(true);
             ChoiceboxWeek.setVisible(true);
+            ChoiceboxMonth.getItems().setAll(
+                    "January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"
+            );
         }
     }
     /**
@@ -241,91 +251,81 @@ public class Controller {
             System.out.println("Detected Week: " + week);
         }
     }
-
-
     @FXML
-    private void showGraphs() {
+    private void showGraphs(){
         String selectedType = TypeBox.getValue();
-        String year = ComboboxYear.getValue();
-        String period = null;
 
-        if ("Year".equals(selectedType)) {
-            period = year;
-        } else if ("Quarters".equals(selectedType)) {
-            period = ChoiceboxMonth.getValue(); // This will be Q1, Q2, etc.
-        } else if ("Month".equals(selectedType)) {
-            period = ChoiceboxMonth.getValue(); // This will be January, February, etc.
-        } else if ("Week".equals(selectedType)) {
-            period = ChoiceboxWeek.getValue(); // This will be the week number
+        if (selectedType == null){
+            System.out.println("ERROR: Type or Year is null!");
         }
 
-        if (period != null) {
-            updatePieChart(selectedType, year, period);
+        CategoryAxis xAxis = new CategoryAxis();
+        xAxis.setLabel("Time");
+
+        CategoryAxis yAxis = new CategoryAxis();
+        yAxis.setLabel("Level");
+
+        barChart = new BarChart(xAxis, yAxis);
+        XYChart.Series greenSeries= new XYChart.Series();
+        greenSeries.setName("Don't empty");
+
+
+        switch (selectedType) {
+            case "Year":
+                String selectedYear = ComboboxYear.getValue();
+                System.out.println(selectedYear);
+
+                break;
+            case "Quarters":
+                String selectedQuarter = ChoiceboxMonth.getValue();
+                System.out.println(selectedQuarter);
+                break;
+            case "Month":
+                String selectedMonth = ChoiceboxMonth.getValue();
+                System.out.println(selectedMonth);
+                break;
+            case "Week":
+                String selectedWeek = ChoiceboxWeek.getValue();
+                System.out.println(selectedWeek);
+                break;
+           default:
+               System.out.println("Invalid choice");
+        }
+    }
+    @FXML
+    private void UploadFile(){
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+
+        // Get the Stage from the button
+        Window stage = button.getScene().getWindow();
+
+        File file = fileChooser.showOpenDialog(stage);
+        if (file != null) {
+            filePath = file.getAbsolutePath();
+
+            System.out.println("Selected File: " + filePath); // Debugging output
+            CSVReader.ReadCSV(filePath);
         }
     }
 
-    private void updatePieChart(String type, String year, String period) {
-        // Clear existing data
-        pieChart.getData().clear();
-
-        // Fetch data based on the type and period
-        List<PieChart.Data> data = fetchDataForPieChart(type, year, period);
-
-        // Add data to the pie chart
-        pieChart.getData().addAll(data);
+    public String getFilePath() {
+        return filePath; // Allow other parts of the app to get the file path
     }
+    private void updateWeeks(int month) {
+        int year = java.time.Year.now().getValue(); // Get current year (change as needed)
+        YearMonth yearMonth = YearMonth.of(year, month);
 
-    private List<PieChart.Data> fetchDataForPieChart(String type, String year, String period) {
-        List<PieChart.Data> data = new ArrayList<>();
+        WeekFields weekFields = WeekFields.of(Locale.getDefault()); // Get local week system
+        int firstWeek = yearMonth.atDay(1).get(weekFields.weekOfWeekBasedYear());
+        int lastWeek = yearMonth.atEndOfMonth().get(weekFields.weekOfWeekBasedYear());
 
-        // Determine the date range based on the selected type and period
-        List<Date> dates = getDatesForPeriod(type, year, period);
-
-        for (Date date : dates) {
-            List<Measurement> measurements = DBRead.getMeasurements(date);
-
-            // Process measurements to create pie chart data
-            data.addAll(processMeasurements(measurements));
+        List<String> weeks = new ArrayList<>();
+        for (int i = firstWeek; i <= lastWeek; i++) {
+            weeks.add(String.valueOf(i));
         }
 
-        return data;
-    }
-
-    private List<Date> getDatesForPeriod(String type, String year, String period) {
-        List<Date> dates = new ArrayList<>();
-
-        // Implement logic to determine the list of dates based on the selected period
-        // For example, if the period is a month, return all dates in that month
-        // This is a placeholder implementation
-        if ("Year".equals(type)) {
-            // Return all dates in the year
-            dates.add(Date.valueOf(year + "-01-01")); // Example: Add more dates as needed
-        } else if ("Quarters".equals(type)) {
-            // Return all dates in the quarter
-            dates.add(Date.valueOf(year + "-" + period.substring(1) + "-01")); // Example
-        } else if ("Month".equals(type)) {
-            // Return all dates in the month
-            dates.add(Date.valueOf(year + "-" + period + "-01")); // Example
-        } else if ("Week".equals(type)) {
-            // Return all dates in the week
-            dates.add(Date.valueOf(year + "-W" + period + "-1")); // Example: ISO week date format
-        }
-
-        return dates;
-    }
-
-    private List<PieChart.Data> processMeasurements(List<Measurement> measurements) {
-        // Count occurrences of each color
-        long greenCount = measurements.stream().filter(m -> m.getColor() == 0).count();
-        long yellowCount = measurements.stream().filter(m -> m.getColor() == 1).count();
-        long redCount = measurements.stream().filter(m -> m.getColor() == 2).count();
-
-        List<PieChart.Data> data = new ArrayList<>();
-        data.add(new PieChart.Data("Green", greenCount));
-        data.add(new PieChart.Data("Yellow", yellowCount));
-        data.add(new PieChart.Data("Red", redCount));
-
-        return data;
+        ChoiceboxWeek.setItems(FXCollections.observableArrayList(weeks));
     }
 
 }
