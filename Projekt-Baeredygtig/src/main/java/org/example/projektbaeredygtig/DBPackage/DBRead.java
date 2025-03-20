@@ -35,7 +35,9 @@ public class DBRead {
                     rs.getDate(2),
                     rs.getDate(3),
                     ColorConverter.convert(rs.getInt(4)),
-                    rs.getBoolean(5)
+                    rs.getBoolean(5),
+                    rs.getBoolean(6),
+                    rs.getFloat(7)
             );
         }
         catch (Exception e) {
@@ -69,7 +71,9 @@ public class DBRead {
                     rs.getDate(2),
                     rs.getDate(3),
                     ColorConverter.convert(rs.getInt(4)),
-                    rs.getBoolean(5)
+                    rs.getBoolean(5),
+                    rs.getBoolean(6),
+                    rs.getFloat(7)
             );
         }
         catch (Exception e) {
@@ -101,7 +105,9 @@ public class DBRead {
                     rs.getDate(2),
                     rs.getDate(3),
                     ColorConverter.convert(rs.getInt(4)),
-                    rs.getBoolean(5)
+                    rs.getBoolean(5),
+                    rs.getBoolean(6),
+                    rs.getFloat(7)
             ));
         }
         catch (Exception e) {
