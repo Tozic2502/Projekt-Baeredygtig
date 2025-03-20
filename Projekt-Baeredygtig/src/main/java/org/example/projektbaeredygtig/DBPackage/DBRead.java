@@ -52,7 +52,7 @@ public class DBRead {
      */
     public static Measurement getMeasurement(int binID, Date measurementDate)
     {
-        Connection conn = DB.getConnection();
+        Connection conn = DBConnection.getConnection();
         String sql = "SELECT * FROM Measurements WHERE BinID = ? AND MeasureDate = ?";
         Measurement measurement = null;
 
