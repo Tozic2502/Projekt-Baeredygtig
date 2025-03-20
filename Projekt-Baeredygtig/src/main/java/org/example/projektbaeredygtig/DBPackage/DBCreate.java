@@ -10,7 +10,7 @@ public class DBCreate
     public static void createMeasurement(Measurement measurement)
     {
         Connection con = DBConnection.getConnection();
-        String sql = "INSERT INTO Measurements (BinID, MeasuredDate, EmptiedDate, Colour, HazardWaste, BinLevel) VALUES (?,?,?,?,?,?)";
+        String sql = "INSERT INTO Measurements (BinID, MeasureDate, EmptiedDate, Colour, HazardWaste, BinLevel) VALUES (?,?,?,?,?,?)";
         try
         {
             PreparedStatement ps = con.prepareStatement(sql);
@@ -24,16 +24,16 @@ public class DBCreate
             int affectedRows = ps.executeUpdate();
             if(affectedRows > 0)
             {
-                System.out.println("Measurement created successfully");
+                //System.out.println("Measurement created successfully");
             }
             else
             {
-                System.out.println("Measurement creation failed");
+                //System.out.println("Measurement creation failed");
             }
         } catch (Exception e)
         {
             throw new RuntimeException(e);
         }
-        DBConnection.disconnect();
+        //DBConnection.disconnect();
     }
 }

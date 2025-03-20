@@ -2,9 +2,9 @@ package org.example.projektbaeredygtig;
 
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import org.example.projektbaeredygtig.DBPackage.DBConnection;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,8 +15,7 @@ public class Controller {
     @FXML Button ModeToggle;
     @FXML GridPane gridPane;
     @FXML Label MonthLabel, WeekLabel;
-    @FXML BarChart barChart;
-    @FXML PieChart pieChart;
+    @FXML BarChart BarChart;
 
     private boolean isAdvancedMode = false;
     private TextField typeField = new TextField();
@@ -25,10 +24,9 @@ public class Controller {
     private TextField weekField = new TextField();
 
     @FXML void initialize() {
-
-
+        DBConnection.connect();
         TypeBox.getItems().addAll("Year", "Quarters", "Month", "Week");
-        TypeBox.setOnAction(event -> typeChoiceBox());
+        TypeBox.setOnAction(event -> typeChoicebox());
         ComboboxYear.getItems().setAll("2001", "2002", "2003", "2004", "2005",
                 "2006", "2007", "2008", "2009", "2010");
         ChoiceboxWeek.getItems().setAll(
@@ -42,6 +40,7 @@ public class Controller {
         ChoiceboxMonth.setVisible(false);
         ChoiceboxWeek.setVisible(false);
 
+        CSVReader.ReadCSV("/home/mikkelgaming/Downloads/dummy_data.csv");
 
     }
 
@@ -66,7 +65,7 @@ public class Controller {
         } else {
             System.out.println("Switch Mode box");
             switchToComboBoxes();
-            typeChoiceBox();
+            typeChoicebox();
             MonthLabel.setText("Choose month");
             WeekLabel.setText("Choose week");
             ModeToggle.setText("Advanced");
@@ -99,7 +98,7 @@ public class Controller {
         yearField.setVisible(false);
         weekField.setVisible(false);
         monthField.textProperty().addListener((observable, oldValue, newValue) -> {
-            typeChoiceText(newValue);
+            typeChoicetext(newValue);
         });
 
     }
@@ -131,7 +130,7 @@ public class Controller {
 
 
     @FXML
-    private void typeChoiceBox() {
+    private void typeChoicebox() {
         if (ComboboxYear == null || TypeBox == null) {
             System.out.println("ERROR: ComboboxYear or TypeBox is null!");
             return;
@@ -173,7 +172,7 @@ public class Controller {
      * This method prints out what was detected; you can replace the
      * print statements with your own processing logic.
      */
-    private void typeChoiceText(String input) {
+    private void typeChoicetext(String input) {
         if (input == null || input.trim().isEmpty()) {
             return; // nothing to process
         }
@@ -233,7 +232,8 @@ public class Controller {
             System.out.println("Detected Week: " + week);
         }
     }
+    @FXML
+    private void showGraphs(){
 
-
-
+    }
 }
