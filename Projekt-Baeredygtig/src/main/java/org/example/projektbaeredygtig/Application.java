@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 public class Application extends javafx.application.Application {
     @Override
@@ -16,7 +17,6 @@ public class Application extends javafx.application.Application {
 
         scene.getStylesheets().add(getClass().getResource("/Styles/styles.css").toExternalForm());
 
-
         stage.setTitle("Green Route");
         stage.setScene(scene);
         stage.show();
@@ -24,6 +24,6 @@ public class Application extends javafx.application.Application {
 
     public static void main(String[] args) {
         launch();
-
     }
+
 }

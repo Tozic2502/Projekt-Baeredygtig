@@ -8,7 +8,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import org.example.projektbaeredygtig.DBPackage.DBConnection;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,7 +26,7 @@ public class Controller {
     private TextField weekField = new TextField();
 
     @FXML void initialize() {
-
+        DBConnection.connect();
         TypeBox.getItems().addAll("Year", "Quarters", "Month", "Week");
         TypeBox.setOnAction(event -> typeChoicebox());
         ComboboxYear.getItems().setAll("2001", "2002", "2003", "2004", "2005",
@@ -45,7 +44,7 @@ public class Controller {
         ChoiceboxMonth.setVisible(false);
         ChoiceboxWeek.setVisible(false);
 
-
+        CSVReader.ReadCSV("/home/mikkelgaming/Downloads/dummy_data.csv");
 
     }
 
@@ -237,24 +236,8 @@ public class Controller {
             System.out.println("Detected Week: " + week);
         }
     }
-
-
     @FXML
-    private void optimiseLabel() {
-
-        //display label
-    }
-    private void calcOptimise(){
-        int fullRoutekm = 80;
-        int fullRoutetime = 90;
-
-        //calc functions for label
-
-    }
-
-
-    @FXML
-    public void showGraphs(){
+    private void showGraphs(){
         String selectedType = TypeBox.getValue();
 
         if (selectedType == null){
@@ -294,7 +277,6 @@ public class Controller {
                System.out.println("Invalid choice");
         }
     }
-
     @FXML
     private void changePieChart(){
         //input data and change
