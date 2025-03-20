@@ -11,7 +11,10 @@ module org.example.projektbaeredygtig {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.sql;
+    requires java.desktop;
 
     opens org.example.projektbaeredygtig to javafx.fxml;
     exports org.example.projektbaeredygtig;
+    exports org.example.projektbaeredygtig.DB;
+    opens org.example.projektbaeredygtig.DB to javafx.fxml;
 }

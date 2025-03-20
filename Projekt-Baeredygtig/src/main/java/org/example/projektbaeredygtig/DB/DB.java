@@ -1,4 +1,4 @@
-package org.example.projektbaeredygtig;
+package org.example.projektbaeredygtig.DB;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -78,4 +78,6 @@ public class DB
             System.err.println("Error disconnecting from database" + e.getMessage());
         }
     }
+
+
 }

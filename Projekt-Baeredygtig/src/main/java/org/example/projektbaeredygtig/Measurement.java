@@ -10,8 +10,26 @@ public class Measurement {
     private Date EmptiedDate;
     private BinColor Color;
     private Boolean HazardWaste;
+    private Boolean FoodWaste;
+    private float BinLevel;
 
     public Measurement() {}
+
+    public float getLevel() {
+        return BinLevel;
+    }
+
+    public void setLevel(float level) {
+        this.BinLevel = level;
+    }
+
+    public Boolean getFoodWaste() {
+        return FoodWaste;
+    }
+
+    public void setFoodWaste(Boolean foodWaste) {
+        FoodWaste = foodWaste;
+    }
 
     public Measurement(int MeasureID, int BinID, Date MeasuredDate, Date EmptiedDate, BinColor Color, Boolean HazardWaste) {
         this.MeasureID = MeasureID;
