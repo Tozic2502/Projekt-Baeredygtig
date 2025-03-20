@@ -52,7 +52,7 @@ public class CSVReader {
 
             /*
             List<Measurement> a = DBRead.getMeasurements(measurement.getMeasuredDate());
-            System.out.println(a.size());
+            System.out.println("-----" + a.size() + "-----");
             for (Measurement m : a)
             {
                 System.out.println(m.getBinID());
