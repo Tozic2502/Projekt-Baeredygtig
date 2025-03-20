@@ -8,6 +8,7 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
@@ -17,6 +18,10 @@ import org.example.projektbaeredygtig.DBPackage.DBRead;
 import java.io.File;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.YearMonth;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
@@ -47,8 +52,7 @@ public class Controller {
         DBConnection.connect();
         TypeBox.getItems().addAll("Year", "Quarters", "Month", "Week");
         TypeBox.setOnAction(event -> typeChoicebox());
-        ComboboxYear.getItems().setAll("2001", "2002", "2003", "2004", "2005",
-                "2006", "2007", "2008", "2009", "2010");
+        ComboboxYear.getItems().setAll("2020", "2021", "2022", "2023", "2024", "2025");
         ChoiceboxMonth.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal.intValue() >= 0) {
                 updateWeeks(newVal.intValue() + 1); // Convert index (0-11) to month number (1-12)
@@ -445,4 +449,5 @@ public class Controller {
 
         ChoiceboxWeek.setItems(FXCollections.observableArrayList(weeks));
     }
+
 }
