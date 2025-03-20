@@ -15,11 +15,11 @@ public class Measurement {
 
     public Measurement() {}
 
-    public float getLevel() {
+    public float getBinLevel() {
         return BinLevel;
     }
 
-    public void setLevel(float level) {
+    public void setBinLevel(float level) {
         this.BinLevel = level;
     }
 
@@ -31,13 +31,16 @@ public class Measurement {
         FoodWaste = foodWaste;
     }
 
-    public Measurement(int MeasureID, int BinID, Date MeasuredDate, Date EmptiedDate, BinColor Color, Boolean HazardWaste) {
+    public Measurement(int MeasureID, int BinID, Date MeasuredDate, Date EmptiedDate, BinColor Color, Boolean HazardWaste, Boolean FoodWaste, float BinLevel)
+    {
         this.MeasureID = MeasureID;
         this.BinID = BinID;
         this.MeasuredDate = MeasuredDate;
         this.EmptiedDate = EmptiedDate;
         this.Color = Color;
         this.HazardWaste = HazardWaste;
+        this.FoodWaste = FoodWaste;
+        this.BinLevel = BinLevel;
     }
 
     public int getMeasureID() {

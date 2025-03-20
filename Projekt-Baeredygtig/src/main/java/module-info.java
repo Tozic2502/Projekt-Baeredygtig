@@ -15,6 +15,6 @@ module org.example.projektbaeredygtig {
 
     opens org.example.projektbaeredygtig to javafx.fxml;
     exports org.example.projektbaeredygtig;
-    exports org.example.projektbaeredygtig.DB;
-    opens org.example.projektbaeredygtig.DB to javafx.fxml;
+    exports org.example.projektbaeredygtig.DBPackage;
+    opens org.example.projektbaeredygtig.DBPackage to javafx.fxml;
 }
