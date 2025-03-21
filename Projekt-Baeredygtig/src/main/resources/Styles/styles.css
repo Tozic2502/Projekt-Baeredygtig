@@ -41,13 +41,31 @@
 .chart-bar {
     -fx-bar-width: 10px;
     -fx-category-gap: 15px;
+    -fx-background-radius: 2px 2px 0 0;
 }
 
 .chart-plot-background {
-    -fx-padding: 0 10px 0 10px;
+    -fx-padding: 0 15px 0 15px;
+    -fx-background-color: transparent;
 }
 
 .chart {
     -fx-padding: 15px;
     -fx-horizontal-grid-lines-visible: false;
+}
+
+/* Improve control styling */
+.button {
+    -fx-background-radius: 4px;
+    -fx-padding: 6px 12px;
+}
+
+.choice-box, .combo-box {
+    -fx-background-radius: 4px;
+}
+
+.text-field {
+    -fx-background-radius: 4px;
+    -fx-padding: 6px 8px;
+    -fx-prompt-text-fill: rgba(0, 100, 0, 0.5);
 }

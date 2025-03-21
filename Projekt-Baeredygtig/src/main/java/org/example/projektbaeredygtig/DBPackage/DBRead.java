@@ -21,7 +21,7 @@ public class DBRead {
     public static Measurement getMeasurement(int id)
     {
          Connection conn = DBConnection.getConnection();
-         String sql = "SELECT * FROM Measurements WHERE id = " + id;
+         String sql = "SELECT * FROM Measurements WHERE id = ?";
          Measurement measurement = null;
 
         try {
@@ -170,11 +170,12 @@ public class DBRead {
     public static String getCityOfBin(int BinID)
     {
         Connection conn = DBConnection.getConnection();
-        String sql = "SELECT City FROM Bins WHERE BinID = " + BinID;
+        String sql = "SELECT City FROM Bins WHERE BinID = ?";
         Measurement measurement = null;
 
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, BinID);
             ResultSet rs = pstmt.executeQuery();
 
             // Returns city of the bin.

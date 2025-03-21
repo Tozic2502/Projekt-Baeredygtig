@@ -10,9 +10,7 @@ public class Application extends javafx.application.Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1275, 720);
-
-        System.out.println(getClass().getResource("/styles/styles.css"));
-
+        
         scene.getStylesheets().add(getClass().getResource("/Styles/styles.css").toExternalForm());
 
         stage.setTitle("Green Route");

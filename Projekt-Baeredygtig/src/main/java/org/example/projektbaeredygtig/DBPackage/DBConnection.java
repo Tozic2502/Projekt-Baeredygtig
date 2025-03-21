@@ -52,8 +52,15 @@ public class DBConnection
     {
         try{
             if(con == null || con.isClosed()){
-                con = DriverManager.getConnection("jdbc:sqlserver://localhost:" + port + ";databaseName=" + databaseName, userName, password);
-                System.out.println("Connected to database");
+                try {
+                    con = DriverManager.getConnection("jdbc:sqlserver://localhost:" + port + ";databaseName=" + databaseName, userName, password);
+                    System.out.println("Connected to database");
+                } catch (SQLException ex) {
+                    System.err.println("Failed to connect to database: " + ex.getMessage());
+                    // Show a more helpful error message
+                    String errorMessage = "Could not connect to database. Please check that SQL Server is running ";
+                    System.err.println(errorMessage);
+                }
             }
 
         } catch(SQLException e)

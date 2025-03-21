@@ -42,6 +42,7 @@ public class Controller {
     @FXML void initialize() {
         DBConnection.connect();
         TypeBox.getItems().addAll("Year", "Quarters", "Month", "Week");
+        TypeBox.setValue("Year"); // Set default value
         TypeBox.setOnAction(event -> typeChoicebox());
         
         // Set up bar chart initial properties
@@ -150,9 +151,13 @@ public class Controller {
         typeField.setVisible(false);
         yearField.setVisible(false);
         weekField.setVisible(false);
+        monthField.setVisible(true);
         monthField.textProperty().addListener((observable, oldValue, newValue) -> {
             typeChoicetext(newValue);
         });
+        
+        // Add promptText to make the field's purpose clear
+        monthField.setPromptText("Enter time period (e.g., 2023 month January)");
 
     }
 
@@ -292,6 +297,18 @@ public class Controller {
 
     @FXML
     private void showGraphs() {
+        if (isAdvancedMode) {
+            // In advanced mode, parse the text input
+            String input = monthField.getText();
+            if (input == null || input.trim().isEmpty()) {
+                System.out.println("ERROR: No input provided in advanced mode");
+                return;
+            }
+            typeChoicetext(input);
+            // Handle the rest of the method - advanced mode implementation could be added here
+            return;
+        }
+        
         String selectedType = TypeBox.getValue();
         String selectedYear = ComboboxYear.getValue();
         if (selectedType == null || selectedYear == null) {

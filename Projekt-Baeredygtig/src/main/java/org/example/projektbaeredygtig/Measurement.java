@@ -39,7 +39,6 @@ public class Measurement {
         this.EmptiedDate = EmptiedDate;
         this.Color = Color;
         this.HazardWaste = HazardWaste;
-        this.FoodWaste = FoodWaste;
         this.BinLevel = BinLevel;
     }
 
