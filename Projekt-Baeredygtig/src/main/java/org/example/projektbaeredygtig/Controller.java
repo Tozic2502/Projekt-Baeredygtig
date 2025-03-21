@@ -32,10 +32,11 @@ public class Controller {
     @FXML ChoiceBox<String> ChoiceboxMonth, ChoiceboxWeek;
     @FXML Button ModeToggle;
     @FXML GridPane gridPane;
-    @FXML Label MonthLabel, WeekLabel;
+    @FXML Label MonthLabel, WeekLabel,routeResultLabel;
     @FXML Button button;
     @FXML BarChart<String, Number> barChart;
     @FXML PieChart pieChart;
+
 
     private boolean isAdvancedMode = false;
     private TextField typeField = new TextField();
@@ -312,21 +313,10 @@ public class Controller {
                 month = convertMonthNameToNumber(selectedMonth);
                 int week = Integer.parseInt(selectedWeek);
 
-                // Determine available weeks in the selected month
                 YearMonth yearMonth = YearMonth.of(Integer.parseInt(year), month);
-                int maxWeeks = yearMonth.atEndOfMonth().get(WeekFields.of(Locale.getDefault()).weekOfMonth());
-
-                // Validate the selected week number
-                if (week < 1 || week > maxWeeks) {
-                    System.out.println("Invalid week number for the selected month.");
-                    return;
-                }
-
-                // Calculate the start and end dates for the selected week
                 LocalDate firstDayOfWeek = yearMonth.atDay(1).with(WeekFields.of(Locale.getDefault()).weekOfMonth(), week);
                 LocalDate lastDayOfWeek = firstDayOfWeek.plusDays(6);
 
-                // Ensure the last day of the week does not exceed the end of the month
                 if (lastDayOfWeek.getMonthValue() != month) {
                     lastDayOfWeek = yearMonth.atEndOfMonth();
                 }
@@ -334,28 +324,58 @@ public class Controller {
                 startDate = Date.valueOf(firstDayOfWeek);
                 endDate = Date.valueOf(lastDayOfWeek);
                 break;
-            default:
-                System.out.println("Invalid choice");
-                return;
         }
 
-        // Retrieve color data for the pie chart
-        Map<BinColor, Long> colorData = DBRead.getColorData(startDate, endDate);
+        if (startDate == null || endDate == null) {
+            routeResultLabel.setText("Invalid date selection.");
+            return;
+        }
 
-        // Populate the pie chart
+        // Fetch and aggregate route data
+        RouteCalc routeCalc = new RouteCalc();
+        RouteCalc.AggregatedResult result = routeCalc.aggregatePeriod(startDate.toLocalDate(), endDate.toLocalDate());
+
+        // Format result as a string
+        String resultText = String.format(
+                "🚛 Route Summary:\n" +
+                        "📏 Total Distance:   %.1f km\n" +
+                        "⏳ Total Time:       %.1f min\n" +
+                        "✅ Distance Saved:   %.1f km\n" +
+                        "⏲️ Time Saved:       %.1f min",
+                result.getTotalDrivenDistance()/60,
+                result.getTotalDrivenTime()/60,
+                result.getTotalDistanceSaved(),
+                result.getTotalTimeSaved()
+        );
+
+// Update the label with the formatted result
+        routeResultLabel.setText(resultText);
+
+        // Update the label with the result
+        routeResultLabel.setText(resultText);
+
+        // --- Update PieChart ---
+        updatePieChart(startDate, endDate);
+
+        // --- Update BarChart ---
+        updateBarChart(startDate, endDate);
+    }
+
+    private void updateBarChart(Date startDate, Date endDate) {
+        Map<String, Map<BinColor, Long>> binMeasureData = DBRead.getBinMeasureDataForPeriod(startDate, endDate);
+        populateBarChart(binMeasureData);
+    }
+
+    private void updatePieChart(Date startDate, Date endDate) {
+        Map<BinColor, Long> colorData = DBRead.getColorData(startDate, endDate);
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+
         for (Map.Entry<BinColor, Long> entry : colorData.entrySet()) {
             pieChartData.add(new PieChart.Data(entry.getKey().name(), entry.getValue()));
         }
-        pieChart.setAnimated(false);
+
         pieChart.getData().clear();
         pieChart.setData(pieChartData);
-
-
-        // Populate the bar chart based on bin measure data
-        Map<String, Map<BinColor, Long>> binMeasureData = DBRead.getBinMeasureDataForPeriod(startDate, endDate);
-        populateBarChart(binMeasureData);
-
     }
 
 
@@ -412,6 +432,7 @@ public class Controller {
         barChart.setAnimated(false);
         barChart.getData().clear();
         barChart.getData().addAll(greenSeries, yellowSeries, redSeries);
+
 
     }
 

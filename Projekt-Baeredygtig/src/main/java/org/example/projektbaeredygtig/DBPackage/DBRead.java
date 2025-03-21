@@ -333,4 +333,30 @@ public class DBRead {
         }
         return dailyColorData;
     }
+    public static List<Measurement> getMeasurementsInRange(Date startDate, Date endDate) {
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT * FROM Measurements WHERE MeasureDate BETWEEN ? AND ?";
+        List<Measurement> measurements = new ArrayList<>();
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setDate(1, startDate);
+            pstmt.setDate(2, endDate);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                measurements.add(new Measurement(
+                        rs.getInt(1), // MeasureID
+                        rs.getInt(2), // BinID
+                        rs.getDate(3), // MeasureDate
+                        rs.getDate(4), // EmptiedDate
+                        ColorConverter.convert(rs.getInt(5)), // Color
+                        rs.getBoolean(6), // HazardWaste
+                        rs.getFloat(7) // BinLevel
+                ));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching measurements: " + e.getMessage());
+        }
+        return measurements;
+    }
 }

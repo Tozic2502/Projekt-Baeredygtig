@@ -1,5 +1,8 @@
 package org.example.projektbaeredygtig;
 
+import org.example.projektbaeredygtig.DBPackage.DBRead;
+
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +30,8 @@ public class RouteCalc {
     private static final double CONSTANT_END = 30.0;   // km
     private static final double CONSTANT_DISTANCE = CONSTANT_START + CONSTANT_END; // 60 km
 
-    // Compute the average speed (km per minute) from the full route
+
     private static final double AVERAGE_SPEED = FULL_ROUTE_DISTANCE / FULL_ROUTE_TIME;
-    // Compute the time for the constant segments (driving 60 km)
     private static final double CONSTANT_TIME = CONSTANT_DISTANCE / AVERAGE_SPEED;
 
     /**
@@ -140,7 +142,7 @@ public class RouteCalc {
     }
 
     // A list to hold all daily route records.
-    private final List<RouteRecord> routeRecords = new ArrayList<>();
+    private List<RouteRecord> routeRecords = new ArrayList<>();
 
     /**
      * Calculates the overall route values for a given alternative route.
@@ -187,15 +189,55 @@ public class RouteCalc {
         double totalDistanceSaved = 0;
         double totalTimeSaved = 0;
         int count = 0;
+
+        routeRecords.clear(); // Reset route records before calculation
+
+        // Fetch all relevant measurements within the date range
+        List<Measurement> measurements = DBRead.getMeasurementsInRange(Date.valueOf(start), Date.valueOf(end));
+
+        for (Measurement m : measurements) {
+            RouteSegment rs = null;
+
+            // Determine the correct route segment based on the bin's city
+            String city = DBRead.getCityOfBin(m.getBinID());
+
+            switch (city) {
+                case "Sønderby":
+                    rs = ALTERNATIVES[1]; // Drejby til Sønderby
+                    break;
+                case "Østerby":
+                    rs = ALTERNATIVES[2]; // Drejby til Østerby og Østerby til Sønderby
+                    break;
+                case "Sønderkobbel":
+                    rs = ALTERNATIVES[3]; // Drejby til Sønderkobbel Strand Camping
+                    break;
+                default:
+                    continue; // Skip bins that do not belong to valid cities
+            }
+
+            // Calculate the total route with the fixed 60 km constant + detour
+            CalculationResult result = calculateDailyResult(rs);
+
+            // Store the record
+            routeRecords.add(new RouteRecord(m.getMeasuredDate().toLocalDate(), rs, result));
+        }
+
+        // Aggregate results over the period
         for (RouteRecord record : routeRecords) {
             if (!record.getDate().isBefore(start) && !record.getDate().isAfter(end)) {
                 totalDrivenDistance += record.getResult().getOverallDistance();
                 totalDrivenTime += record.getResult().getOverallTime();
-                totalDistanceSaved += record.getResult().getDistanceSaved();
-                totalTimeSaved += record.getResult().getTimeSaved();
+
+                // Exclude Broager from savings calculations
+                if (!record.getSegment().getName().equalsIgnoreCase("Frem og tilbage Broager")) {
+                    totalDistanceSaved += record.getResult().getDistanceSaved();
+                    totalTimeSaved += record.getResult().getTimeSaved();
+                }
+
                 count++;
             }
         }
+
         return new AggregatedResult(totalDrivenDistance, totalDrivenTime, totalDistanceSaved, totalTimeSaved, count);
     }
 

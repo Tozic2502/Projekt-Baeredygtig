@@ -117,8 +117,8 @@
          <bottom>
             <Pane prefHeight="102.0" prefWidth="1006.0" BorderPane.alignment="CENTER">
                <children>
-                  <Label alignment="TOP_CENTER" layoutX="28.0" layoutY="6.0" prefHeight="17.0" prefWidth="161.0" text="Reduced mileage in KM:" textFill="SEAGREEN" />
-                  <Label layoutX="45.0" layoutY="43.0" text="Time saved (h/min):" textFill="SEAGREEN" />
+                  <Label fx:id="routeResultLabel" alignment="TOP_CENTER" layoutX="28.0" prefHeight="103.0" prefWidth="464.0" textFill="SEAGREEN" />
+                  <Label layoutX="45.0" layoutY="43.0" textFill="SEAGREEN" />
                </children>
             </Pane>
          </bottom>
