@@ -1,14 +1,13 @@
 package org.example.projektbaeredygtig;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
@@ -18,10 +17,6 @@ import org.example.projektbaeredygtig.DBPackage.DBRead;
 import java.io.File;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.YearMonth;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
@@ -30,6 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 public class Controller {
     @FXML ComboBox<String> ComboboxYear, TypeBox;
@@ -52,7 +48,7 @@ public class Controller {
         DBConnection.connect();
         TypeBox.getItems().addAll("Year", "Quarters", "Month", "Week");
         TypeBox.setOnAction(event -> typeChoicebox());
-        ComboboxYear.getItems().setAll("2020", "2021", "2022", "2023", "2024", "2025");
+        ComboboxYear.getItems().setAll("2020");
         ChoiceboxMonth.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal.intValue() >= 0) {
                 updateWeeks(newVal.intValue() + 1); // Convert index (0-11) to month number (1-12)
@@ -353,12 +349,18 @@ public class Controller {
         }
         pieChart.setData(pieChartData);
 
+
         // Populate the bar chart based on bin measure data
         Map<String, Map<BinColor, Long>> binMeasureData = DBRead.getBinMeasureDataForPeriod(startDate, endDate);
         populateBarChart(binMeasureData);
+
     }
 
 
+    private String getColor(int index) {
+        String[] colors = {"#0000FF", "#FF0000", "#00FF00"};
+        return colors[index % colors.length]; // Loop colors if more slices
+    }
 
 
     private int convertMonthNameToNumber(String monthName) {
@@ -410,6 +412,7 @@ public class Controller {
 
         barChart.getData().clear();
         barChart.getData().addAll(greenSeries, yellowSeries, redSeries);
+
     }
 
 
