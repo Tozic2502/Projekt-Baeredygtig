@@ -1,10 +1,53 @@
 .gradient-pane {
     -fx-background-color: linear-gradient(from 0% 0% to 100% 0%, #7bb661, #306030);
 }
-.default-color2.chart-bar { -fx-bar-fill: #AA0000; }
-.default-color0.chart-bar { -fx-bar-fill: #00FF00; }
-.default-color1.chart-bar { -fx-bar-fill: #CCFF00; }
+.default-color2.chart-bar { 
+    -fx-bar-fill: #AA0000;
+    -fx-opacity: 0.9;
+}
+.default-color0.chart-bar { 
+    -fx-bar-fill: #00FF00;
+    -fx-opacity: 0.9;
+}
+.default-color1.chart-bar { 
+    -fx-bar-fill: #CCFF00;
+    -fx-opacity: 0.9;
+}
 
 .default-color2.chart-pie { -fx-pie-color: #AA0000; }
 .default-color0.chart-pie { -fx-pie-color: #00FF00; }
 .default-color1.chart-pie { -fx-pie-color: #CCFF00; }
+
+/* Additional chart styling */
+.chart {
+    -fx-padding: 10px;
+}
+
+.chart-title {
+    -fx-font-size: 14pt;
+    -fx-font-weight: bold;
+}
+
+.axis-label {
+    -fx-font-size: 10pt;
+}
+
+.chart-legend {
+    -fx-background-color: transparent;
+    -fx-padding: 5px;
+}
+
+/* Make the bar chart bars narrower and prevent edge clipping */
+.chart-bar {
+    -fx-bar-width: 10px;
+    -fx-category-gap: 15px;
+}
+
+.chart-plot-background {
+    -fx-padding: 0 10px 0 10px;
+}
+
+.chart {
+    -fx-padding: 15px;
+    -fx-horizontal-grid-lines-visible: false;
+}

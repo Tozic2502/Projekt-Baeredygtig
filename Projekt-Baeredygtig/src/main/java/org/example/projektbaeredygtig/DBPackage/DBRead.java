@@ -56,7 +56,7 @@ public class DBRead {
     public static Measurement getMeasurement(int binID, Date measurementDate)
     {
         Connection conn = DBConnection.getConnection();
-        String sql = "SELECT  FROM Measurements WHERE BinID = ? AND MeasureDate = ?";
+        String sql = "SELECT * FROM Measurements WHERE BinID = ? AND MeasureDate = ?";
         Measurement measurement = null;
 
         try {
@@ -91,10 +91,12 @@ public class DBRead {
 
     public static Map<String, Map<BinColor, Long>> getBinMeasureDataForPeriod(Date startDate, Date endDate) {
         Connection conn = DBConnection.getConnection();
-        String sql = "SELECT BinID, Colour, COUNT(*) " +
+        // Modified query to ensure we get all the necessary data with proper grouping
+        String sql = "SELECT BinID, Colour, MeasureDate, COUNT(*) as CountValue " +
                 "FROM Measurements " +
                 "WHERE MeasureDate BETWEEN ? AND ? " +
-                "GROUP BY BinID, Colour";
+                "GROUP BY BinID, Colour, MeasureDate " +
+                "ORDER BY MeasureDate";
         Map<String, Map<BinColor, Long>> binMeasureData = new HashMap<>();
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -105,9 +107,18 @@ public class DBRead {
             while (rs.next()) {
                 String binId = rs.getString("BinID");
                 BinColor color = ColorConverter.convert(rs.getInt("Colour"));
-                long count = rs.getLong(3);
+                Date measureDate = rs.getDate("MeasureDate");
+                long count = rs.getLong("CountValue");
 
-                binMeasureData.computeIfAbsent(binId, k -> new HashMap<>()).put(color, count);
+                if (measureDate != null) {
+                    // Create a key that includes both the bin ID and the date
+                    String key = binId + "_" + measureDate.toString();
+                    binMeasureData.computeIfAbsent(key, k -> new HashMap<>()).put(color, count);
+                } else {
+                    // If date is null (should not happen, but just in case)
+                    String key = binId + "_unknown";
+                    binMeasureData.computeIfAbsent(key, k -> new HashMap<>()).put(color, count);
+                }
             }
         } catch (SQLException e) {
             System.out.println("Error retrieving bin measure data: " + e.getMessage());
@@ -263,7 +274,7 @@ public class DBRead {
 
     public static Map<String, Map<BinColor, Long>> getMonthlyColorDataForQuarter(int year, String quarter) {
         Connection conn = DBConnection.getConnection();
-        String sql = "SELECT MONTH(MeasureDate) AS Month, Color, COUNT(*) FROM Measurements WHERE YEAR(MeasureDate) = ? AND QUARTER(MeasureDate) = ? GROUP BY MONTH(MeasureDate), Colour";
+        String sql = "SELECT MONTH(MeasureDate) AS Month, Colour, COUNT(*) FROM Measurements WHERE YEAR(MeasureDate) = ? AND QUARTER(MeasureDate) = ? GROUP BY MONTH(MeasureDate), Colour";
         Map<String, Map<BinColor, Long>> monthlyColorData = new HashMap<>();
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -287,7 +298,7 @@ public class DBRead {
 
     public static Map<String, Map<BinColor, Long>> getWeeklyColorDataForMonth(int year, int month) {
         Connection conn = DBConnection.getConnection();
-        String sql = "SELECT WEEK(MeasureDate) AS Week, Color, COUNT(*) FROM Measurements WHERE YEAR(MeasureDate) = ? AND MONTH(MeasureDate) = ? GROUP BY WEEK(MeasureDate), Colour";
+        String sql = "SELECT WEEK(MeasureDate) AS Week, Colour, COUNT(*) FROM Measurements WHERE YEAR(MeasureDate) = ? AND MONTH(MeasureDate) = ? GROUP BY WEEK(MeasureDate), Colour";
         Map<String, Map<BinColor, Long>> weeklyColorData = new HashMap<>();
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -311,7 +322,7 @@ public class DBRead {
 
     public static Map<String, Map<BinColor, Long>> getDailyColorDataForWeek(int year, int month, int week) {
         Connection conn = DBConnection.getConnection();
-        String sql = "SELECT DAY(MeasureDate) AS Day, Color, COUNT(*) FROM Measurements WHERE YEAR(MeasureDate) = ? AND MONTH(MeasureDate) = ? AND WEEK(MeasureDate) = ? GROUP BY DAY(MeasureDate), Colour";
+        String sql = "SELECT DAY(MeasureDate) AS Day, Colour, COUNT(*) FROM Measurements WHERE YEAR(MeasureDate) = ? AND MONTH(MeasureDate) = ? AND WEEK(MeasureDate) = ? GROUP BY DAY(MeasureDate), Colour";
         Map<String, Map<BinColor, Long>> dailyColorData = new HashMap<>();
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
