@@ -3,9 +3,7 @@ package org.example.projektbaeredygtig;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 import java.io.IOException;
-import java.time.LocalDate;
 
 public class Application extends javafx.application.Application {
     @Override
