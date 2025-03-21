@@ -347,6 +347,8 @@ public class Controller {
         for (Map.Entry<BinColor, Long> entry : colorData.entrySet()) {
             pieChartData.add(new PieChart.Data(entry.getKey().name(), entry.getValue()));
         }
+        pieChart.setAnimated(false);
+        pieChart.getData().clear();
         pieChart.setData(pieChartData);
 
 
@@ -407,6 +409,7 @@ public class Controller {
             redSeries.getData().add(new XYChart.Data<>(binId, colorCountMap.getOrDefault(BinColor.RED, 0L)));
         }
 
+        barChart.setAnimated(false);
         barChart.getData().clear();
         barChart.getData().addAll(greenSeries, yellowSeries, redSeries);
 
