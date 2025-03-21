@@ -71,24 +71,8 @@
 }
 
 /* Route calculation styles */
-.route-calculation-button {
-    -fx-background-color: #306030;
-    -fx-text-fill: white;
+.result-value {
+    -fx-font-size: 24pt;
     -fx-font-weight: bold;
-    -fx-background-radius: 4px;
-    -fx-padding: 8px 16px;
-}
-
-.route-calculation-button:hover {
-    -fx-background-color: #3c7a3c;
-}
-
-.route-results-label {
-    -fx-font-size: 12pt;
-    -fx-padding: 10px;
-    -fx-background-color: #f8f8f8;
-    -fx-background-radius: 4px;
-    -fx-border-color: #ddd;
-    -fx-border-radius: 4px;
-    -fx-wrap-text: true;
+    -fx-text-fill: #306030;
 }

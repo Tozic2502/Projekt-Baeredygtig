@@ -31,8 +31,8 @@ public class Controller {
     @FXML Button button;
     @FXML BarChart<String, Number> barChart;
     @FXML PieChart pieChart;
-    @FXML Button routeCalculationButton;
-    @FXML Label routeResultsLabel;
+    @FXML Label totalDistanceLabel;
+    @FXML Label totalTimeLabel;
 
     private boolean isAdvancedMode = false;
     private TextField typeField = new TextField();
@@ -320,50 +320,84 @@ public class Controller {
 
         Date startDate = null;
         Date endDate = null;
+        LocalDate localStartDate = null;
+        LocalDate localEndDate = null;
 
         switch (selectedType) {
             case "Year":
-                startDate = Date.valueOf(selectedYear + "-01-01");
-                endDate = Date.valueOf(selectedYear + "-12-31");
+                localStartDate = LocalDate.of(Integer.parseInt(selectedYear), 1, 1);
+                localEndDate = LocalDate.of(Integer.parseInt(selectedYear), 12, 31);
+                startDate = Date.valueOf(localStartDate);
+                endDate = Date.valueOf(localEndDate);
                 break;
             case "Quarters":
                 String selectedQuarter = ChoiceboxMonth.getValue();
+                if (selectedQuarter == null) {
+                    System.out.println("ERROR: No quarter selected");
+                    return;
+                }
                 String year = ComboboxYear.getValue();
                 switch (selectedQuarter) {
                     case "Q1":
-                        startDate = Date.valueOf(year + "-01-01");
-                        endDate = Date.valueOf(year + "-03-31");
+                        localStartDate = LocalDate.of(Integer.parseInt(year), 1, 1);
+                        localEndDate = LocalDate.of(Integer.parseInt(year), 3, 31);
+                        startDate = Date.valueOf(localStartDate);
+                        endDate = Date.valueOf(localEndDate);
                         break;
                     case "Q2":
-                        startDate = Date.valueOf(year + "-04-01");
-                        endDate = Date.valueOf(year + "-06-30");
+                        localStartDate = LocalDate.of(Integer.parseInt(year), 4, 1);
+                        localEndDate = LocalDate.of(Integer.parseInt(year), 6, 30);
+                        startDate = Date.valueOf(localStartDate);
+                        endDate = Date.valueOf(localEndDate);
                         break;
                     case "Q3":
-                        startDate = Date.valueOf(year + "-07-01");
-                        endDate = Date.valueOf(year + "-09-30");
+                        localStartDate = LocalDate.of(Integer.parseInt(year), 7, 1);
+                        localEndDate = LocalDate.of(Integer.parseInt(year), 9, 30);
+                        startDate = Date.valueOf(localStartDate);
+                        endDate = Date.valueOf(localEndDate);
                         break;
                     case "Q4":
-                        startDate = Date.valueOf(year + "-10-01");
-                        endDate = Date.valueOf(year + "-12-31");
+                        localStartDate = LocalDate.of(Integer.parseInt(year), 10, 1);
+                        localEndDate = LocalDate.of(Integer.parseInt(year), 12, 31);
+                        startDate = Date.valueOf(localStartDate);
+                        endDate = Date.valueOf(localEndDate);
                         break;
+                    default:
+                        System.out.println("Invalid quarter selection");
+                        return;
                 }
                 break;
             case "Month":
                 String selectedMonth = ChoiceboxMonth.getValue();
+                if (selectedMonth == null) {
+                    System.out.println("ERROR: No month selected");
+                    return;
+                }
                 year = ComboboxYear.getValue();
                 int month = convertMonthNameToNumber(selectedMonth);
-                startDate = Date.valueOf(year + "-" + String.format("%02d", month) + "-01");
-                endDate = Date.valueOf(year + "-" + String.format("%02d", month) + "-" + YearMonth.of(Integer.parseInt(year), month).lengthOfMonth());
+                YearMonth yearMonth = YearMonth.of(Integer.parseInt(year), month);
+                localStartDate = yearMonth.atDay(1);
+                localEndDate = yearMonth.atEndOfMonth();
+                startDate = Date.valueOf(localStartDate);
+                endDate = Date.valueOf(localEndDate);
                 break;
             case "Week":
                 String selectedWeek = ChoiceboxWeek.getValue();
+                if (selectedWeek == null) {
+                    System.out.println("ERROR: No week selected");
+                    return;
+                }
                 year = ComboboxYear.getValue();
                 selectedMonth = ChoiceboxMonth.getValue();
+                if (selectedMonth == null) {
+                    System.out.println("ERROR: No month selected for week view");
+                    return;
+                }
                 month = convertMonthNameToNumber(selectedMonth);
                 int week = Integer.parseInt(selectedWeek);
 
                 // Determine available weeks in the selected month
-                YearMonth yearMonth = YearMonth.of(Integer.parseInt(year), month);
+                yearMonth = YearMonth.of(Integer.parseInt(year), month);
                 int maxWeeks = yearMonth.atEndOfMonth().get(WeekFields.of(Locale.getDefault()).weekOfMonth());
 
                 // Validate the selected week number
@@ -373,16 +407,16 @@ public class Controller {
                 }
 
                 // Calculate the start and end dates for the selected week
-                LocalDate firstDayOfWeek = yearMonth.atDay(1).with(WeekFields.of(Locale.getDefault()).weekOfMonth(), week);
-                LocalDate lastDayOfWeek = firstDayOfWeek.plusDays(6);
+                localStartDate = yearMonth.atDay(1).with(WeekFields.of(Locale.getDefault()).weekOfMonth(), week);
+                localEndDate = localStartDate.plusDays(6);
 
                 // Ensure the last day of the week does not exceed the end of the month
-                if (lastDayOfWeek.getMonthValue() != month) {
-                    lastDayOfWeek = yearMonth.atEndOfMonth();
+                if (localEndDate.getMonthValue() != month) {
+                    localEndDate = yearMonth.atEndOfMonth();
                 }
 
-                startDate = Date.valueOf(firstDayOfWeek);
-                endDate = Date.valueOf(lastDayOfWeek);
+                startDate = Date.valueOf(localStartDate);
+                endDate = Date.valueOf(localEndDate);
                 break;
             default:
                 System.out.println("Invalid choice");
@@ -446,6 +480,26 @@ public class Controller {
             }
         }
 
+        // Calculate and display route data
+        RouteCalc routeCalc = new RouteCalc();
+        RouteCalc.AggregatedResult result = routeCalc.aggregatePeriod(localStartDate, localEndDate);
+
+        // Format distance with 1 decimal place and add km unit
+        String distanceText = String.format("%.1f km", result.getTotalDistanceSaved());
+        totalDistanceLabel.setText(distanceText);
+
+        // Format time with 1 decimal place
+        String timeText;
+        if (result.getTotalTimeSaved() >= 60) {
+            // Convert to hours and minutes
+            int hours = (int) (result.getTotalTimeSaved() / 60);
+            int minutes = (int) (result.getTotalTimeSaved() % 60);
+            timeText = String.format("%d h %d min", hours, minutes);
+        } else {
+            // Just show minutes
+            timeText = String.format("%.1f min", result.getTotalTimeSaved());
+        }
+        totalTimeLabel.setText(timeText);
     }
 
 
@@ -816,138 +870,4 @@ public class Controller {
         ChoiceboxWeek.setItems(FXCollections.observableArrayList(weeks));
     }
 
-    /**
-     * Calculate route data for the selected time period.
-     * This method is called when the route calculation button is clicked.
-     */
-    @FXML
-    private void calculateRouteData() {
-        if (ComboboxYear == null || TypeBox == null) {
-            System.out.println("ERROR: Type or Year is null!");
-            if (routeResultsLabel != null) {
-                routeResultsLabel.setText("Error: Please select a year and time period type.");
-            }
-            return;
-        }
-
-        String selectedType = TypeBox.getValue();
-        String selectedYear = ComboboxYear.getValue();
-
-        if (selectedType == null || selectedYear == null) {
-            System.out.println("ERROR: Type or Year is null!");
-            if (routeResultsLabel != null) {
-                routeResultsLabel.setText("Error: Please select a year and time period type.");
-            }
-            return;
-        }
-
-        LocalDate startDate = null;
-        LocalDate endDate = null;
-
-        switch (selectedType) {
-            case "Year":
-                startDate = LocalDate.of(Integer.parseInt(selectedYear), 1, 1);
-                endDate = LocalDate.of(Integer.parseInt(selectedYear), 12, 31);
-                break;
-            case "Quarters":
-                String selectedQuarter = ChoiceboxMonth.getValue();
-                if (selectedQuarter == null) {
-                    routeResultsLabel.setText("Error: Please select a quarter.");
-                    return;
-                }
-                switch (selectedQuarter) {
-                    case "Q1":
-                        startDate = LocalDate.of(Integer.parseInt(selectedYear), 1, 1);
-                        endDate = LocalDate.of(Integer.parseInt(selectedYear), 3, 31);
-                        break;
-                    case "Q2":
-                        startDate = LocalDate.of(Integer.parseInt(selectedYear), 4, 1);
-                        endDate = LocalDate.of(Integer.parseInt(selectedYear), 6, 30);
-                        break;
-                    case "Q3":
-                        startDate = LocalDate.of(Integer.parseInt(selectedYear), 7, 1);
-                        endDate = LocalDate.of(Integer.parseInt(selectedYear), 9, 30);
-                        break;
-                    case "Q4":
-                        startDate = LocalDate.of(Integer.parseInt(selectedYear), 10, 1);
-                        endDate = LocalDate.of(Integer.parseInt(selectedYear), 12, 31);
-                        break;
-                    default:
-                        routeResultsLabel.setText("Error: Invalid quarter selection.");
-                        return;
-                }
-                break;
-            case "Month":
-                String selectedMonth = ChoiceboxMonth.getValue();
-                if (selectedMonth == null) {
-                    routeResultsLabel.setText("Error: Please select a month.");
-                    return;
-                }
-                int month = convertMonthNameToNumber(selectedMonth);
-                YearMonth yearMonth = YearMonth.of(Integer.parseInt(selectedYear), month);
-                startDate = yearMonth.atDay(1);
-                endDate = yearMonth.atEndOfMonth();
-                break;
-            case "Week":
-                String selectedWeek = ChoiceboxWeek.getValue();
-                String selectedMonthForWeek = ChoiceboxMonth.getValue();
-                if (selectedWeek == null || selectedMonthForWeek == null) {
-                    routeResultsLabel.setText("Error: Please select a month and week.");
-                    return;
-                }
-                month = convertMonthNameToNumber(selectedMonthForWeek);
-                int week = Integer.parseInt(selectedWeek);
-
-                // Determine available weeks in the selected month
-                YearMonth yearMonthForWeek = YearMonth.of(Integer.parseInt(selectedYear), month);
-                int maxWeeks = yearMonthForWeek.atEndOfMonth().get(WeekFields.of(Locale.getDefault()).weekOfMonth());
-
-                // Validate the selected week number
-                if (week < 1 || week > maxWeeks) {
-                    routeResultsLabel.setText("Error: Invalid week number for the selected month.");
-                    return;
-                }
-
-                // Calculate the start and end dates for the selected week
-                LocalDate firstDayOfWeek = yearMonthForWeek.atDay(1).with(WeekFields.of(Locale.getDefault()).weekOfMonth(), week);
-                LocalDate lastDayOfWeek = firstDayOfWeek.plusDays(6);
-
-                // Ensure the last day of the week does not exceed the end of the month
-                if (lastDayOfWeek.getMonthValue() != month) {
-                    lastDayOfWeek = yearMonthForWeek.atEndOfMonth();
-                }
-
-                startDate = firstDayOfWeek;
-                endDate = lastDayOfWeek;
-                break;
-            default:
-                routeResultsLabel.setText("Error: Invalid period type.");
-                return;
-        }
-
-        // Perform route calculation
-        RouteCalc routeCalc = new RouteCalc();
-        RouteCalc.AggregatedResult result = routeCalc.aggregatePeriod(startDate, endDate);
-
-        // Display results
-        String resultText = String.format(
-                "Route Results for Selected Period:\n" +
-                "Total Distance Driven: %.1f km\n" +
-                "Total Time Spent: %.1f minutes\n" +
-                "Distance Saved: %.1f km\n" +
-                "Time Saved: %.1f minutes\n" +
-                "Days Driven: %d",
-                result.getTotalDrivenDistance(),
-                result.getTotalDrivenTime(),
-                result.getTotalDistanceSaved(),
-                result.getTotalTimeSaved(),
-                result.getDaysDriven()
-        );
-
-        if (routeResultsLabel != null) {
-            routeResultsLabel.setText(resultText);
-        } else {
-            System.out.println(resultText);
-        }
-    }
 }
