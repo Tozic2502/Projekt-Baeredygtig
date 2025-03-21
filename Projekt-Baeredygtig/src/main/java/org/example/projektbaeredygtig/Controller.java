@@ -357,10 +357,7 @@ public class Controller {
     }
 
 
-    private String getColor(int index) {
-        String[] colors = {"#0000FF", "#FF0000", "#00FF00"};
-        return colors[index % colors.length]; // Loop colors if more slices
-    }
+
 
 
     private int convertMonthNameToNumber(String monthName) {
