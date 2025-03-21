@@ -3,8 +3,8 @@
 }
 .default-color2.chart-bar { -fx-bar-fill: #AA0000; }
 .default-color0.chart-bar { -fx-bar-fill: #00FF00; }
-.default-color1.chart-bar { -fx-bar-fill: #CCFF00; }
+.default-color1.chart-bar { -fx-bar-fill: #CCCC00; }
 
 .default-color2.chart-pie { -fx-pie-color: #AA0000; }
-.default-color0.chart-pie { -fx-pie-color: #00FF00; }
-.default-color1.chart-pie { -fx-pie-color: #CCFF00; }
+.default-color0.chart-pie { -fx-pie-color: #00CC00; }
+.default-color1.chart-pie { -fx-pie-color: #CCCC00; }
