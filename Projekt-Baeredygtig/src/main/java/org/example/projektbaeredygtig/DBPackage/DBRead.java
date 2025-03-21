@@ -345,4 +345,39 @@ public class DBRead {
         }
         return dailyColorData;
     }
+    
+    /**
+     * Gets all measurements between the given dates, inclusive.
+     * @param startDate The start date
+     * @param endDate The end date
+     * @return List of Measurement objects
+     */
+    public static List<Measurement> getMeasurementsInRange(Date startDate, Date endDate) {
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT * FROM Measurements WHERE MeasureDate BETWEEN ? AND ?";
+        List<Measurement> measurements = new ArrayList<>();
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setDate(1, startDate);
+            pstmt.setDate(2, endDate);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                measurements.add(new Measurement(
+                        rs.getInt(1),
+                        rs.getInt(2),
+                        rs.getDate(3),
+                        rs.getDate(4),
+                        ColorConverter.convert(rs.getInt(5)),
+                        rs.getBoolean(6),
+                        rs.getFloat(7)
+                ));
+            }
+        } catch (Exception e) {
+            System.out.println("Error retrieving measurements in date range: " + e.getMessage());
+            System.out.println(e.getLocalizedMessage());
+        }
+        return measurements;
+    }
 }

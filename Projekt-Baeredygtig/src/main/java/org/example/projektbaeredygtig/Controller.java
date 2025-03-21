@@ -31,6 +31,8 @@ public class Controller {
     @FXML Button button;
     @FXML BarChart<String, Number> barChart;
     @FXML PieChart pieChart;
+    @FXML Button routeCalculationButton;
+    @FXML Label routeResultsLabel;
 
     private boolean isAdvancedMode = false;
     private TextField typeField = new TextField();
@@ -814,4 +816,138 @@ public class Controller {
         ChoiceboxWeek.setItems(FXCollections.observableArrayList(weeks));
     }
 
+    /**
+     * Calculate route data for the selected time period.
+     * This method is called when the route calculation button is clicked.
+     */
+    @FXML
+    private void calculateRouteData() {
+        if (ComboboxYear == null || TypeBox == null) {
+            System.out.println("ERROR: Type or Year is null!");
+            if (routeResultsLabel != null) {
+                routeResultsLabel.setText("Error: Please select a year and time period type.");
+            }
+            return;
+        }
+
+        String selectedType = TypeBox.getValue();
+        String selectedYear = ComboboxYear.getValue();
+
+        if (selectedType == null || selectedYear == null) {
+            System.out.println("ERROR: Type or Year is null!");
+            if (routeResultsLabel != null) {
+                routeResultsLabel.setText("Error: Please select a year and time period type.");
+            }
+            return;
+        }
+
+        LocalDate startDate = null;
+        LocalDate endDate = null;
+
+        switch (selectedType) {
+            case "Year":
+                startDate = LocalDate.of(Integer.parseInt(selectedYear), 1, 1);
+                endDate = LocalDate.of(Integer.parseInt(selectedYear), 12, 31);
+                break;
+            case "Quarters":
+                String selectedQuarter = ChoiceboxMonth.getValue();
+                if (selectedQuarter == null) {
+                    routeResultsLabel.setText("Error: Please select a quarter.");
+                    return;
+                }
+                switch (selectedQuarter) {
+                    case "Q1":
+                        startDate = LocalDate.of(Integer.parseInt(selectedYear), 1, 1);
+                        endDate = LocalDate.of(Integer.parseInt(selectedYear), 3, 31);
+                        break;
+                    case "Q2":
+                        startDate = LocalDate.of(Integer.parseInt(selectedYear), 4, 1);
+                        endDate = LocalDate.of(Integer.parseInt(selectedYear), 6, 30);
+                        break;
+                    case "Q3":
+                        startDate = LocalDate.of(Integer.parseInt(selectedYear), 7, 1);
+                        endDate = LocalDate.of(Integer.parseInt(selectedYear), 9, 30);
+                        break;
+                    case "Q4":
+                        startDate = LocalDate.of(Integer.parseInt(selectedYear), 10, 1);
+                        endDate = LocalDate.of(Integer.parseInt(selectedYear), 12, 31);
+                        break;
+                    default:
+                        routeResultsLabel.setText("Error: Invalid quarter selection.");
+                        return;
+                }
+                break;
+            case "Month":
+                String selectedMonth = ChoiceboxMonth.getValue();
+                if (selectedMonth == null) {
+                    routeResultsLabel.setText("Error: Please select a month.");
+                    return;
+                }
+                int month = convertMonthNameToNumber(selectedMonth);
+                YearMonth yearMonth = YearMonth.of(Integer.parseInt(selectedYear), month);
+                startDate = yearMonth.atDay(1);
+                endDate = yearMonth.atEndOfMonth();
+                break;
+            case "Week":
+                String selectedWeek = ChoiceboxWeek.getValue();
+                String selectedMonthForWeek = ChoiceboxMonth.getValue();
+                if (selectedWeek == null || selectedMonthForWeek == null) {
+                    routeResultsLabel.setText("Error: Please select a month and week.");
+                    return;
+                }
+                month = convertMonthNameToNumber(selectedMonthForWeek);
+                int week = Integer.parseInt(selectedWeek);
+
+                // Determine available weeks in the selected month
+                YearMonth yearMonthForWeek = YearMonth.of(Integer.parseInt(selectedYear), month);
+                int maxWeeks = yearMonthForWeek.atEndOfMonth().get(WeekFields.of(Locale.getDefault()).weekOfMonth());
+
+                // Validate the selected week number
+                if (week < 1 || week > maxWeeks) {
+                    routeResultsLabel.setText("Error: Invalid week number for the selected month.");
+                    return;
+                }
+
+                // Calculate the start and end dates for the selected week
+                LocalDate firstDayOfWeek = yearMonthForWeek.atDay(1).with(WeekFields.of(Locale.getDefault()).weekOfMonth(), week);
+                LocalDate lastDayOfWeek = firstDayOfWeek.plusDays(6);
+
+                // Ensure the last day of the week does not exceed the end of the month
+                if (lastDayOfWeek.getMonthValue() != month) {
+                    lastDayOfWeek = yearMonthForWeek.atEndOfMonth();
+                }
+
+                startDate = firstDayOfWeek;
+                endDate = lastDayOfWeek;
+                break;
+            default:
+                routeResultsLabel.setText("Error: Invalid period type.");
+                return;
+        }
+
+        // Perform route calculation
+        RouteCalc routeCalc = new RouteCalc();
+        RouteCalc.AggregatedResult result = routeCalc.aggregatePeriod(startDate, endDate);
+
+        // Display results
+        String resultText = String.format(
+                "Route Results for Selected Period:\n" +
+                "Total Distance Driven: %.1f km\n" +
+                "Total Time Spent: %.1f minutes\n" +
+                "Distance Saved: %.1f km\n" +
+                "Time Saved: %.1f minutes\n" +
+                "Days Driven: %d",
+                result.getTotalDrivenDistance(),
+                result.getTotalDrivenTime(),
+                result.getTotalDistanceSaved(),
+                result.getTotalTimeSaved(),
+                result.getDaysDriven()
+        );
+
+        if (routeResultsLabel != null) {
+            routeResultsLabel.setText(resultText);
+        } else {
+            System.out.println(resultText);
+        }
+    }
 }
