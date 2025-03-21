@@ -231,8 +231,8 @@ public class RouteCalc {
 
                 // Exclude Broager from savings calculations
                 if (!record.getSegment().getName().equalsIgnoreCase("Frem og tilbage Broager")) {
-                    totalDistanceSaved += record.getResult().getDistanceSaved();
-                    totalTimeSaved += record.getResult().getTimeSaved();
+                    totalDistanceSaved += record.getResult().getDistanceSaved() / 60;
+                    totalTimeSaved += record.getResult().getTimeSaved() / 60;
                 }
 
                 count++;
